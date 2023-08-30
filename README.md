@@ -1,8 +1,10 @@
 # Ephesus
 
-This is Betaveros' Ephesus. It is a simple hassle free puzzle hunt upload website.
+This is Ephesus-2, an open source to-be-running version of [Betaveros' Ephesus](https://github.com/betaveros/ephesus-public). 
 
-The project is not up and running yet, but it will be, soon
+It is a simple hassle free puzzle hunt upload and hosting website.
+
+This project is currently set up to run via Heroku. A permanent site is currently in the works, once the hosting is sorted.
 
 ## How to host your own Ephesus
 
