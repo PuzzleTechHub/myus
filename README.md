@@ -24,3 +24,7 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
+
+# Contributor Code of Conduct
+
+Be nice to each other. Also, everything in [Contributor Covenant version 1.4](https://www.contributor-covenant.org/version/1/4/code-of-conduct/)
