@@ -1,0 +1,34 @@
+# SQLite database
+/**/*.sqlite3
+
+# pyc files
+/**/*.pyc
+
+# Auto-collected static files folder
+/static/
+
+# Virtualenv
+/venv/
+/env/
+
+# pyenv
+.python-version
+
+# Ansible retry files
+/**/*.retry
+/**/*.log
+
+# Vagrant metadata
+.vagrant
+
+# pid files
+/**/*.pid
+
+# MacOS generated files
+.DS_Store
+
+# swap files
+*.swp
+
+# VSCode
+\.vscode/

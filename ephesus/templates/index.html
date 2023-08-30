@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block main %}
+<h1>welcome to ephesus!</h1>
+<p>This is a site where you can run puzzlehunts, with teams and answer checking and puzzle unlocking and stuff! Except we're in like super early alpha and I will probably nuke the database and start over at some point.</p>
+<h2>Hunts</h2>
+{% if hunts %}
+<ul>
+	{% for hunt in hunts %}
+	<li><a href="{% url 'view_hunt' hunt.id %}">{{ hunt.name }}</a></li>
+	{% endfor %}
+</ul>
+{% else %}
+<p>none yet</p>
+{% endif %}
+<p><a href="{% url 'new_hunt' %}">Create a new hunt</a></p>
+{% endblock %}

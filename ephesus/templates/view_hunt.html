@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load markdown %}
+{% block nav %}
+» {{ hunt.name }}
+{% endblock %}
+{% block main %}
+<h1>Hunt: {{ hunt.name }}</h1>
+<nav class="nav-hunt">
+	<p>
+		<a href="{% url 'leaderboard' hunt.id %}">Leaderboard</a>
+	</p>
+
+{% if is_organizer %}
+<p>You are an organizer of this hunt. <a href="{% url 'new_puzzle' hunt.id %}">add puzzle</a></p>
+{% elif team %}
+<p>You are  <a href="{% url 'my_team' hunt.id %}">on Team {{ team.name }}</a>.</p>
+{% else %}
+<p>You should <a href="{% url 'my_team' hunt.id %}">create or join a team</a> to solve puzzles.</p>
+{% endif %}
+</nav>
+
+{{ hunt.description|markdown }}
+
+
+<h2>Puzzles</h2>
+
+{% if puzzles %}
+<table class="classic">
+	<tr><th>Puzzle</th><th>Solved?</th><th>Solves</th><th>Guesses</th></tr>
+{% for puzzle in puzzles %}
+	<tr>
+		<td><a href="{% url 'view_puzzle' hunt.id puzzle.id %}">{{ puzzle.name }}</a></td>
+		<td>{% if puzzle.solved %}✅{% endif %}</td>
+		<td>{{ puzzle.solve_count }}</td>
+		<td>{{ puzzle.guess_count }}</td>
+	</tr>
+{% endfor %}
+</table>
+{% else %}
+No puzzles are viewable, either because the hunt organizers haven't added any or because you haven't unlocked any.
+{% endif %}
+
+{% endblock %}

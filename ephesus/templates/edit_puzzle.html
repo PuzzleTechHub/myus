@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block nav %}
+» <a href="{% url 'view_hunt' hunt.id %}">{{ hunt.name }}</a>
+» <a href="{% url 'view_puzzle' hunt.id puzzle.id %}">{{ puzzle.name }}</a>
+» Edit
+{% endblock %}
+{% block main %}
+<h1>Edit Puzzle: {{ puzzle.name }}</h1>
+<form method="post">
+	{% csrf_token %}
+	{{ form.non_field_errors }}
+
+	<table class="classic">
+		{{ form.as_table }}
+	</table>
+	<input type="submit" value="Submit">
+</form>
+
+{% endblock %}

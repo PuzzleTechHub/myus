@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block nav %}
+» <a href="{% url 'view_hunt' hunt.id %}">{{ hunt.name }}</a>
+» Leaderboard
+{% endblock %}
+{% block main %}
+<h1>Hunt: {{ hunt.name }} / Leaderboard</h1>
+
+{% if teams %}
+<table class="classic">
+    <tr><th>Team</th><th>Score</th><th>Solves</th><th>Last Solve (in some timezone idk)</th></tr>
+	{% for team in teams %}
+	<tr>
+		<td>{{ team.name }}</td>
+		<td>{{ team.score }}</td>
+		<td>{{ team.solve_count }}</td>
+		<td>{{ team.last_solve }}</td>
+	</tr>
+	{% endfor %}
+</table>
+{% else %}
+No teams...
+{% endif %}
+
+{% endblock %}
