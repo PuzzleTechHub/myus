@@ -34,3 +34,5 @@
 
 # VSCode
 \.vscode/
+
+#ephesus/migrations/*

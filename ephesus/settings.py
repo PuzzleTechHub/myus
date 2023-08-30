@@ -114,9 +114,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+#STATIC_URL = 'static/'
+#STATIC_URL = os.path.join(BASE_DIR, "ephesus", "static")
+STATIC_ROOT = 'staticfiles'
 STATIC_URL = '/static/'
 
-LOGIN_URL = '/login'
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/'
 
 #settings to silence Django errors
