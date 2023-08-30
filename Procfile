@@ -1,1 +1,1 @@
-worker: python manage.py check --deploy
+worker: python manage.py runserver
