@@ -10,8 +10,19 @@ This project is currently set up to run via Heroku. A permanent site is currentl
 
 This is hosted over Django.
 
-Just do
+Install [SQLite3](https://www.tutorialspoint.com/sqlite/sqlite_installation.htm) - 
+```bash
+sudo apt install sqlite3
+```
 
+Now try testing sqlite3
+```bash
+python manage.py dbshell
+> .tables
+> select * from ephesus_hunt;
+```
+
+Just do - 
 ```bash
 pip install -r requirements.txt
 cp .env.template .env
@@ -20,6 +31,7 @@ cp .env.template .env
 And then edit the .env file to have the correct Django variable output for yourself
 
 ```bash
+cd ephesus
 python manage.py makemigrations
 python manage.py migrate
 python manage.py collectstatic

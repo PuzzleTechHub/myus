@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from dotenv.main import load_dotenv
+
+import django
+from django.db import models
+from django.db.models import Model
 load_dotenv(override=True)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -132,3 +136,5 @@ SECURE_HSTS_PRELOAD = False
 
 #what errors to silence when running this
 SILENCED_SYSTEM_CHECKS = ['security.W018','security.W020','models.W042']
+SILENCED_SYSTEM_CHECKS = []
+#DEFAULT_AUTO_FIELD = "" #'django.db.models.BigAutoField'
