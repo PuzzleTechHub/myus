@@ -22,6 +22,7 @@ And then edit the .env file to have the correct Django variable output for yours
 ```bash
 python manage.py makemigrations
 python manage.py migrate
+python manage.py collectstatic
 python manage.py runserver
 ```
 

@@ -3,3 +3,4 @@ bleach==6.0.0
 python-dotenv==1.0.0
 gunicorn==21.2.0
 dj-static==0.0.6
+markdown==3.5.2

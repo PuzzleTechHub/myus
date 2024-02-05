@@ -8,6 +8,7 @@
 
 # Auto-collected static files folder
 /static/
+/ephesus/staticfiles
 
 # Virtualenv
 /venv/
