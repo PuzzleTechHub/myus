@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import sys
 from dotenv.main import load_dotenv
 
 import django
@@ -138,3 +139,48 @@ SECURE_HSTS_PRELOAD = False
 SILENCED_SYSTEM_CHECKS = ['security.W018','security.W020','models.W042']
 SILENCED_SYSTEM_CHECKS = []
 #DEFAULT_AUTO_FIELD = "" #'django.db.models.BigAutoField'
+
+
+
+# https://docs.djangoproject.com/en/3.1/topics/logging/
+
+# Loggers and handlers both have a log level; handlers ignore messages at lower
+# levels. This is useful because a logger can have multiple handlers with
+# different log levels.
+
+# The levels are DEBUG < INFO < WARNING < ERROR < CRITICAL. DEBUG logs a *lot*,
+# like exceptions every time a template variable is looked up and missing,
+# which happens literally all the time, so that might be a bit too much.
+
+# If you want to log to stdout (e.g. on Heroku), the handler looks as follows:
+# {
+#     'level': 'INFO',
+#     'class': 'logging.StreamHandler',
+#     'stream': sys.stdout,
+#     'formatter': 'django',
+# },
+
+LOGGING = {
+    "version": 1,  # the dictConfig format version
+    "disable_existing_loggers": False,  # retain the default loggers
+    'formatters': {
+        'django': {
+            'format': '%(asctime)s (PID %(process)d) [%(levelname)s] %(module)s\n%(message)s'
+        },
+    },
+    "handlers": {
+        'django': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+            'formatter': 'django',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['django'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    }
+}
