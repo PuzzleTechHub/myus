@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import sys
+import dj_database_url
 from dotenv.main import load_dotenv
 
 import django
@@ -70,15 +71,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'wsgi.application'
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+POSTGRES_URL = os.getenv("DATABASE_URL")
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': dj_database_url.config(default=POSTGRES_URL,conn_max_age=0, ssl_require=True),
 }
 
 AUTH_USER_MODEL = 'ephesus.User'
