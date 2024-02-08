@@ -1,6 +1,6 @@
 # myus
 
-This is myus-2, an open source website for hassle-free puzzle hunt upload and hosting. 
+This is myus, an open source website for hassle-free puzzle hunt upload and hosting. 
 
 Find us on **http://www.puzzlehuntmy.us/**
 
