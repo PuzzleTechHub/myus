@@ -1,12 +1,12 @@
-# Ephesus
+# myus
 
-This is Ephesus-2, an open source to-be-running version of [Betaveros' Ephesus](https://github.com/betaveros/ephesus-public). 
+This is myus-2, an open source website for hassle-free puzzle hunt upload and hosting. 
 
-It is a simple hassle free puzzle hunt upload and hosting website.
+Find us on **http://www.puzzlehuntmy.us/**
 
-This project is currently set up to run via Heroku. A permanent site is currently in the works, once the hosting is sorted.
+This project is currently set up to run via Heroku.
 
-## How to host your own Ephesus
+## How to host your own myus instance
 
 This is hosted over Django.
 
@@ -19,7 +19,7 @@ Now try testing sqlite3
 ```bash
 python manage.py dbshell
 > .tables
-> select * from ephesus_hunt;
+> select * from myus_hunt;
 ```
 
 Just do - 
@@ -31,12 +31,20 @@ cp .env.template .env
 And then edit the .env file to have the correct Django variable output for yourself
 
 ```bash
-cd ephesus
+cd myus
 python manage.py makemigrations
 python manage.py migrate
 python manage.py collectstatic
 python manage.py runserver
 ```
+
+# Why Myus?
+
+Because the original version was called Ephesus so we had to pick a different [Ionian League city](https://en.wikipedia.org/wiki/Ionian_League) for ourselves.
+
+# Credits
+
+This codebase is built off [Betaveros' Ephesus](https://github.com/betaveros/ephesus-public). 
 
 # Contributor Code of Conduct
 

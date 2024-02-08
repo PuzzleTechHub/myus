@@ -71,7 +71,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=500)),
                 ('creation_time', models.DateTimeField(auto_now_add=True)),
                 ('last_solve_time', models.DateTimeField(blank=True, null=True)),
-                ('hunt', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='teams', to='ephesus.Hunt')),
+                ('hunt', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='teams', to='myus.Hunt')),
                 ('invited_members', models.ManyToManyField(blank=True, related_name='invited_teams', to=settings.AUTH_USER_MODEL)),
                 ('members', models.ManyToManyField(blank=True, related_name='teams', to=settings.AUTH_USER_MODEL)),
             ],
@@ -87,7 +87,7 @@ class Migration(migrations.Migration):
                 ('order', models.IntegerField(help_text='Order in which this puzzle is displayed on the hunt page.')),
                 ('progress_points', models.IntegerField(help_text="How many 'progress points' solving this puzzle earns. Progress points are only used to determine unlocking of puzzles.", validators=[django.core.validators.MinValueValidator(0)])),
                 ('progress_threshold', models.IntegerField(help_text="How many 'progress points' are necessary for a team to unlock this puzzle. In particular, puzzles with progress threshold ≤ the 'progress floor' of the hunt are public. (At the start of the hunt, the 'progress floor' will probably be 0 and puzzles with progress threshold 0 will be public.)", validators=[django.core.validators.MinValueValidator(0)])),
-                ('hunt', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='puzzles', to='ephesus.Hunt')),
+                ('hunt', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='puzzles', to='myus.Hunt')),
             ],
         ),
         migrations.CreateModel(
@@ -96,8 +96,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('correct', models.BooleanField()),
                 ('time', models.DateTimeField(auto_now_add=True)),
-                ('puzzle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='guesses', to='ephesus.Puzzle')),
-                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='guesses', to='ephesus.Team')),
+                ('puzzle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='guesses', to='myus.Puzzle')),
+                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='guesses', to='myus.Team')),
                 ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='guesses', to=settings.AUTH_USER_MODEL)),
             ],
         ),
@@ -106,8 +106,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('extra_guesses', models.IntegerField()),
-                ('puzzle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ephesus.Puzzle')),
-                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ephesus.Team')),
+                ('puzzle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='myus.Puzzle')),
+                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='myus.Team')),
             ],
         ),
         migrations.CreateModel(
@@ -116,7 +116,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('guess', models.CharField(max_length=500)),
                 ('response', models.TextField()),
-                ('puzzle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='guess_responses', to='ephesus.Puzzle')),
+                ('puzzle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='guess_responses', to='myus.Puzzle')),
             ],
             options={
                 'unique_together': {('puzzle', 'guess')},

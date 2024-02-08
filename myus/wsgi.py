@@ -1,5 +1,5 @@
 """
-WSGI config for ephesus project.
+WSGI config for myus project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
