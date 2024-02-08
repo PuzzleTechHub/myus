@@ -117,8 +117,10 @@ USE_TZ = True
 
 #STATIC_URL = 'static/'
 #STATIC_URL = os.path.join(BASE_DIR, "ephesus", "static")
-STATIC_ROOT = 'staticfiles'
-STATIC_URL = '/static/'
+#STATIC_ROOT = 'staticfiles'
+#STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(os.path.normpath(BASE_DIR), "staticfiles")
+STATIC_URL = os.path.join(os.path.normpath(BASE_DIR), "static/")
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/'
