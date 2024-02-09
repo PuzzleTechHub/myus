@@ -5,40 +5,56 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('myus', '0001_initial'),
+        ("myus", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='guess',
-            name='guess',
-            field=models.CharField(default='default', max_length=500),
+            model_name="guess",
+            name="guess",
+            field=models.CharField(default="default", max_length=500),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='hunt',
-            name='member_limit',
-            field=models.IntegerField(default=0, help_text='The maximum number of members allowed per team; 0 means unlimited', validators=[django.core.validators.MinValueValidator(0)]),
+            model_name="hunt",
+            name="member_limit",
+            field=models.IntegerField(
+                default=0,
+                help_text="The maximum number of members allowed per team; 0 means unlimited",
+                validators=[django.core.validators.MinValueValidator(0)],
+            ),
         ),
         migrations.AlterField(
-            model_name='puzzle',
-            name='order',
-            field=models.IntegerField(default=0, help_text='Order in which this puzzle is displayed on the hunt page. Ties will be broken by puzzle name.'),
+            model_name="puzzle",
+            name="order",
+            field=models.IntegerField(
+                default=0,
+                help_text="Order in which this puzzle is displayed on the hunt page. Ties will be broken by puzzle name.",
+            ),
         ),
         migrations.AlterField(
-            model_name='puzzle',
-            name='progress_points',
-            field=models.IntegerField(default=0, help_text="How many 'progress points' solving this puzzle earns. Progress points are only used to determine unlocking of puzzles.", validators=[django.core.validators.MinValueValidator(0)]),
+            model_name="puzzle",
+            name="progress_points",
+            field=models.IntegerField(
+                default=0,
+                help_text="How many 'progress points' solving this puzzle earns. Progress points are only used to determine unlocking of puzzles.",
+                validators=[django.core.validators.MinValueValidator(0)],
+            ),
         ),
         migrations.AlterField(
-            model_name='puzzle',
-            name='progress_threshold',
-            field=models.IntegerField(default=0, help_text="How many 'progress points' are necessary for a team to unlock this puzzle. In particular, puzzles with progress threshold ≤ the 'progress floor' of the hunt are public. (At the start of the hunt, the 'progress floor' will probably be 0 and puzzles with progress threshold 0 will be public.)", validators=[django.core.validators.MinValueValidator(0)]),
+            model_name="puzzle",
+            name="progress_threshold",
+            field=models.IntegerField(
+                default=0,
+                help_text="How many 'progress points' are necessary for a team to unlock this puzzle. In particular, puzzles with progress threshold ≤ the 'progress floor' of the hunt are public. (At the start of the hunt, the 'progress floor' will probably be 0 and puzzles with progress threshold 0 will be public.)",
+                validators=[django.core.validators.MinValueValidator(0)],
+            ),
         ),
         migrations.AddConstraint(
-            model_name='team',
-            constraint=models.UniqueConstraint(fields=('name', 'hunt'), name='unique_team_name_per_hunt'),
+            model_name="team",
+            constraint=models.UniqueConstraint(
+                fields=("name", "hunt"), name="unique_team_name_per_hunt"
+            ),
         ),
     ]

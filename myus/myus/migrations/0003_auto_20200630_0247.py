@@ -4,18 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('myus', '0002_auto_20200628_1439'),
+        ("myus", "0002_auto_20200628_1439"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='team',
-            name='last_solve_time',
+            model_name="team",
+            name="last_solve_time",
         ),
         migrations.AddConstraint(
-            model_name='guess',
-            constraint=models.UniqueConstraint(condition=models.Q(correct=True), fields=('team', 'puzzle'), name='unique_correct_guess_team_puzzle'),
+            model_name="guess",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(correct=True),
+                fields=("team", "puzzle"),
+                name="unique_correct_guess_team_puzzle",
+            ),
         ),
     ]

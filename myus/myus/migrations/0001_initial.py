@@ -10,120 +10,413 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('auth', '0011_update_proxy_permissions'),
+        ("auth", "0011_update_proxy_permissions"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('username', models.CharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150, unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()], verbose_name='username')),
-                ('first_name', models.CharField(blank=True, max_length=30, verbose_name='first name')),
-                ('last_name', models.CharField(blank=True, max_length=150, verbose_name='last name')),
-                ('email', models.EmailField(blank=True, max_length=254, verbose_name='email address')),
-                ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
-                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
-                ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
-                ('display_name', models.CharField(blank=True, help_text='Optional.', max_length=500)),
-                ('discord_username', models.CharField(blank=True, help_text='Your Discord username and tag (e.g. example#1234). Not currently used for anything, but might be used in Discord integrations if they are implemented, since it appears that many hunts in the target audience are run over Discord.', max_length=500)),
-                ('bio', models.TextField(blank=True, help_text='Tell us about yourself. Optional.')),
-                ('creation_time', models.DateTimeField(auto_now_add=True)),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
-                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "is_superuser",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        verbose_name="superuser status",
+                    ),
+                ),
+                (
+                    "username",
+                    models.CharField(
+                        error_messages={
+                            "unique": "A user with that username already exists."
+                        },
+                        help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+                        max_length=150,
+                        unique=True,
+                        validators=[
+                            django.contrib.auth.validators.UnicodeUsernameValidator()
+                        ],
+                        verbose_name="username",
+                    ),
+                ),
+                (
+                    "first_name",
+                    models.CharField(
+                        blank=True, max_length=30, verbose_name="first name"
+                    ),
+                ),
+                (
+                    "last_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="last name"
+                    ),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        blank=True, max_length=254, verbose_name="email address"
+                    ),
+                ),
+                (
+                    "is_staff",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates whether the user can log into this admin site.",
+                        verbose_name="staff status",
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+                        verbose_name="active",
+                    ),
+                ),
+                (
+                    "date_joined",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, verbose_name="date joined"
+                    ),
+                ),
+                (
+                    "display_name",
+                    models.CharField(blank=True, help_text="Optional.", max_length=500),
+                ),
+                (
+                    "discord_username",
+                    models.CharField(
+                        blank=True,
+                        help_text="Your Discord username and tag (e.g. example#1234). Not currently used for anything, but might be used in Discord integrations if they are implemented, since it appears that many hunts in the target audience are run over Discord.",
+                        max_length=500,
+                    ),
+                ),
+                (
+                    "bio",
+                    models.TextField(
+                        blank=True, help_text="Tell us about yourself. Optional."
+                    ),
+                ),
+                ("creation_time", models.DateTimeField(auto_now_add=True)),
+                (
+                    "groups",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.Group",
+                        verbose_name="groups",
+                    ),
+                ),
+                (
+                    "user_permissions",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="Specific permissions for this user.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.Permission",
+                        verbose_name="user permissions",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'user',
-                'verbose_name_plural': 'users',
-                'abstract': False,
+                "verbose_name": "user",
+                "verbose_name_plural": "users",
+                "abstract": False,
             },
             managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
+                ("objects", django.contrib.auth.models.UserManager()),
             ],
         ),
         migrations.CreateModel(
-            name='Hunt',
+            name="Hunt",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=500)),
-                ('description', models.TextField(help_text='Description of the hunt.')),
-                ('creation_time', models.DateTimeField(auto_now_add=True)),
-                ('start_time', models.DateTimeField(blank=True, help_text='Start time of the hunt. If empty, the hunt will never begin. For indefinitely open hunts, you can just set it to any time in the past.', null=True)),
-                ('end_time', models.DateTimeField(blank=True, help_text='End date of the hunt. If empty, the hunt will always be open.', null=True)),
-                ('progress_floor', models.IntegerField(default=0, help_text="A floor on the number of 'progress points' held by every team; their 'progress points' will be computed as the maximum of this quantity and the total number of progress points granted by puzzles they've solved. Expected usage is to increase this midhunt to gradually unlock puzzles for everybody.", validators=[django.core.validators.MinValueValidator(0)])),
-                ('member_limit', models.IntegerField(help_text='The maximum number of members allowed per team; 0 means unlimited', validators=[django.core.validators.MinValueValidator(0)])),
-                ('guess_limit', models.IntegerField(default=20, help_text='The default number of guesses teams get on each puzzle; 0 means unlimited', validators=[django.core.validators.MinValueValidator(0)])),
-                ('invited_organizers', models.ManyToManyField(blank=True, related_name='invited_organizing_hunts', to=settings.AUTH_USER_MODEL)),
-                ('organizers', models.ManyToManyField(related_name='organizing_hunts', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=500)),
+                ("description", models.TextField(help_text="Description of the hunt.")),
+                ("creation_time", models.DateTimeField(auto_now_add=True)),
+                (
+                    "start_time",
+                    models.DateTimeField(
+                        blank=True,
+                        help_text="Start time of the hunt. If empty, the hunt will never begin. For indefinitely open hunts, you can just set it to any time in the past.",
+                        null=True,
+                    ),
+                ),
+                (
+                    "end_time",
+                    models.DateTimeField(
+                        blank=True,
+                        help_text="End date of the hunt. If empty, the hunt will always be open.",
+                        null=True,
+                    ),
+                ),
+                (
+                    "progress_floor",
+                    models.IntegerField(
+                        default=0,
+                        help_text="A floor on the number of 'progress points' held by every team; their 'progress points' will be computed as the maximum of this quantity and the total number of progress points granted by puzzles they've solved. Expected usage is to increase this midhunt to gradually unlock puzzles for everybody.",
+                        validators=[django.core.validators.MinValueValidator(0)],
+                    ),
+                ),
+                (
+                    "member_limit",
+                    models.IntegerField(
+                        help_text="The maximum number of members allowed per team; 0 means unlimited",
+                        validators=[django.core.validators.MinValueValidator(0)],
+                    ),
+                ),
+                (
+                    "guess_limit",
+                    models.IntegerField(
+                        default=20,
+                        help_text="The default number of guesses teams get on each puzzle; 0 means unlimited",
+                        validators=[django.core.validators.MinValueValidator(0)],
+                    ),
+                ),
+                (
+                    "invited_organizers",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="invited_organizing_hunts",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "organizers",
+                    models.ManyToManyField(
+                        related_name="organizing_hunts", to=settings.AUTH_USER_MODEL
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Team',
+            name="Team",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=500)),
-                ('creation_time', models.DateTimeField(auto_now_add=True)),
-                ('last_solve_time', models.DateTimeField(blank=True, null=True)),
-                ('hunt', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='teams', to='myus.Hunt')),
-                ('invited_members', models.ManyToManyField(blank=True, related_name='invited_teams', to=settings.AUTH_USER_MODEL)),
-                ('members', models.ManyToManyField(blank=True, related_name='teams', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=500)),
+                ("creation_time", models.DateTimeField(auto_now_add=True)),
+                ("last_solve_time", models.DateTimeField(blank=True, null=True)),
+                (
+                    "hunt",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="teams",
+                        to="myus.Hunt",
+                    ),
+                ),
+                (
+                    "invited_members",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="invited_teams",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "members",
+                    models.ManyToManyField(
+                        blank=True, related_name="teams", to=settings.AUTH_USER_MODEL
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Puzzle',
+            name="Puzzle",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=500)),
-                ('content', models.TextField(blank=True, help_text='The puzzle body. For most puzzles, we suggest just providing an external URL; however, you can put short text-only puzzles here, or include a small amount of flavortext or explanatory text with a URL.')),
-                ('answer', models.CharField(max_length=500)),
-                ('points', models.IntegerField(default=1, help_text='How many points solving this puzzle earns.', validators=[django.core.validators.MinValueValidator(0)])),
-                ('order', models.IntegerField(help_text='Order in which this puzzle is displayed on the hunt page.')),
-                ('progress_points', models.IntegerField(help_text="How many 'progress points' solving this puzzle earns. Progress points are only used to determine unlocking of puzzles.", validators=[django.core.validators.MinValueValidator(0)])),
-                ('progress_threshold', models.IntegerField(help_text="How many 'progress points' are necessary for a team to unlock this puzzle. In particular, puzzles with progress threshold ≤ the 'progress floor' of the hunt are public. (At the start of the hunt, the 'progress floor' will probably be 0 and puzzles with progress threshold 0 will be public.)", validators=[django.core.validators.MinValueValidator(0)])),
-                ('hunt', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='puzzles', to='myus.Hunt')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=500)),
+                (
+                    "content",
+                    models.TextField(
+                        blank=True,
+                        help_text="The puzzle body. For most puzzles, we suggest just providing an external URL; however, you can put short text-only puzzles here, or include a small amount of flavortext or explanatory text with a URL.",
+                    ),
+                ),
+                ("answer", models.CharField(max_length=500)),
+                (
+                    "points",
+                    models.IntegerField(
+                        default=1,
+                        help_text="How many points solving this puzzle earns.",
+                        validators=[django.core.validators.MinValueValidator(0)],
+                    ),
+                ),
+                (
+                    "order",
+                    models.IntegerField(
+                        help_text="Order in which this puzzle is displayed on the hunt page."
+                    ),
+                ),
+                (
+                    "progress_points",
+                    models.IntegerField(
+                        help_text="How many 'progress points' solving this puzzle earns. Progress points are only used to determine unlocking of puzzles.",
+                        validators=[django.core.validators.MinValueValidator(0)],
+                    ),
+                ),
+                (
+                    "progress_threshold",
+                    models.IntegerField(
+                        help_text="How many 'progress points' are necessary for a team to unlock this puzzle. In particular, puzzles with progress threshold ≤ the 'progress floor' of the hunt are public. (At the start of the hunt, the 'progress floor' will probably be 0 and puzzles with progress threshold 0 will be public.)",
+                        validators=[django.core.validators.MinValueValidator(0)],
+                    ),
+                ),
+                (
+                    "hunt",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="puzzles",
+                        to="myus.Hunt",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Guess',
+            name="Guess",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('correct', models.BooleanField()),
-                ('time', models.DateTimeField(auto_now_add=True)),
-                ('puzzle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='guesses', to='myus.Puzzle')),
-                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='guesses', to='myus.Team')),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='guesses', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("correct", models.BooleanField()),
+                ("time", models.DateTimeField(auto_now_add=True)),
+                (
+                    "puzzle",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="guesses",
+                        to="myus.Puzzle",
+                    ),
+                ),
+                (
+                    "team",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="guesses",
+                        to="myus.Team",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="guesses",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ExtraGuessGrant',
+            name="ExtraGuessGrant",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('extra_guesses', models.IntegerField()),
-                ('puzzle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='myus.Puzzle')),
-                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='myus.Team')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("extra_guesses", models.IntegerField()),
+                (
+                    "puzzle",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="myus.Puzzle"
+                    ),
+                ),
+                (
+                    "team",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="myus.Team"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='GuessResponse',
+            name="GuessResponse",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('guess', models.CharField(max_length=500)),
-                ('response', models.TextField()),
-                ('puzzle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='guess_responses', to='myus.Puzzle')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("guess", models.CharField(max_length=500)),
+                ("response", models.TextField()),
+                (
+                    "puzzle",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="guess_responses",
+                        to="myus.Puzzle",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('puzzle', 'guess')},
+                "unique_together": {("puzzle", "guess")},
             },
         ),
         migrations.AddConstraint(
-            model_name='extraguessgrant',
-            constraint=models.UniqueConstraint(fields=('team', 'puzzle'), name='unique_team_puzzle_grant'),
+            model_name="extraguessgrant",
+            constraint=models.UniqueConstraint(
+                fields=("team", "puzzle"), name="unique_team_puzzle_grant"
+            ),
         ),
     ]

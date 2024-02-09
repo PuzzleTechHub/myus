@@ -11,15 +11,22 @@ import django.urls as urls
 
 from .models import Hunt, User, Team, Puzzle, Guess, ExtraGuessGrant
 
+
 def index(request):
     # user = request.user
     hunts = Hunt.objects.all()
-    return render(request, 'index.html', {
-        'hunts': hunts,
-    })
+    return render(
+        request,
+        "index.html",
+        {
+            "hunts": hunts,
+        },
+    )
+
 
 class MarkdownTextarea(forms.Textarea):
-    template_name = 'widgets/markdown_textarea.html'
+    template_name = "widgets/markdown_textarea.html"
+
 
 # based on UserCreationForm from Django source
 class RegisterForm(forms.ModelForm):
@@ -28,21 +35,26 @@ class RegisterForm(forms.ModelForm):
     password.
     """
 
-    password1 = forms.CharField(label="Password",
-        widget=forms.PasswordInput)
-    password2 = forms.CharField(label="Password confirmation",
+    password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
+    password2 = forms.CharField(
+        label="Password confirmation",
         widget=forms.PasswordInput,
-        help_text="Enter the same password as above, for verification.")
-    email = forms.EmailField(label="Email address",
+        help_text="Enter the same password as above, for verification.",
+    )
+    email = forms.EmailField(
+        label="Email address",
         required=False,
-        help_text="Optional, but you'll get useful email notifications when we implement those.")
-    bio = forms.CharField(widget=MarkdownTextarea,
+        help_text="Optional, but you'll get useful email notifications when we implement those.",
+    )
+    bio = forms.CharField(
+        widget=MarkdownTextarea,
         required=False,
-        help_text="(optional) Tell us about yourself. What kinds of puzzle genres or subject matter do you like?")
+        help_text="(optional) Tell us about yourself. What kinds of puzzle genres or subject matter do you like?",
+    )
 
     class Meta:
         model = User
-        fields = ('username','email','display_name','discord_username','bio')
+        fields = ("username", "email", "display_name", "discord_username", "bio")
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -50,7 +62,7 @@ class RegisterForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError(
                 "The two password fields didn't match.",
-                code='password_mismatch',
+                code="password_mismatch",
             )
         return password2
 
@@ -61,28 +73,38 @@ class RegisterForm(forms.ModelForm):
             user.save()
         return user
 
+
 def register(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect(urls.reverse('login'))
+            return redirect(urls.reverse("login"))
         else:
-            return render(request, 'register.html', { "form": form })
+            return render(request, "register.html", {"form": form})
     else:
         form = RegisterForm()
-        return render(request, 'register.html', { "form": form })
+        return render(request, "register.html", {"form": form})
+
 
 class HuntForm(forms.ModelForm):
     description = forms.CharField(widget=MarkdownTextarea, required=False)
 
     class Meta:
         model = Hunt
-        fields = ['name', 'description', 'start_time', 'end_time', 'member_limit', 'guess_limit']
+        fields = [
+            "name",
+            "description",
+            "start_time",
+            "end_time",
+            "member_limit",
+            "guess_limit",
+        ]
+
 
 @login_required
 def new_hunt(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = HuntForm(request.POST)
         if form.is_valid():
             hunt = form.save()
@@ -90,22 +112,29 @@ def new_hunt(request):
             # needs save before we can do many-to-many stuff
             hunt.organizers.add(request.user)
 
-            return redirect(urls.reverse('view_hunt', args=[hunt.id]))
+            return redirect(urls.reverse("view_hunt", args=[hunt.id]))
     else:
         form = HuntForm()
 
-    return render(request, 'new_hunt.html', {
-        'form': form,
-    })
+    return render(
+        request,
+        "new_hunt.html",
+        {
+            "form": form,
+        },
+    )
+
 
 def get_team(user, hunt):
-    if user.is_anonymous: return None
+    if user.is_anonymous:
+        return None
 
     try:
         return Team.objects.get(hunt=hunt, members=user)
     except Team.DoesNotExist:
         return None
     # bad if MultipleObjectsReturned
+
 
 def view_hunt(request, id):
     user = request.user
@@ -121,16 +150,21 @@ def view_hunt(request, id):
         puzzles = hunt.public_puzzles()
 
     puzzles = puzzles.annotate(
-        solve_count=Count('guesses', filter=Q(guesses__correct=True)),
-        guess_count=Count('guesses'),
+        solve_count=Count("guesses", filter=Q(guesses__correct=True)),
+        guess_count=Count("guesses"),
     )
 
-    return render(request, 'view_hunt.html', {
-        'hunt': hunt,
-        'team': team,
-        'puzzles': puzzles.order_by('order'),
-        'is_organizer': is_organizer,
-    })
+    return render(
+        request,
+        "view_hunt.html",
+        {
+            "hunt": hunt,
+            "team": team,
+            "puzzles": puzzles.order_by("order"),
+            "is_organizer": is_organizer,
+        },
+    )
+
 
 def leaderboard(request, id):
     user = request.user
@@ -142,37 +176,45 @@ def leaderboard(request, id):
     teams = hunt.teams.annotate(
         score=Subquery(
             Guess.objects.filter(
-                team=OuterRef('pk'),
+                team=OuterRef("pk"),
                 correct=True,
             )
-            .values('puzzle__points')
-            .annotate(score=Sum('puzzle__points'))
-            .values('score')
+            .values("puzzle__points")
+            .annotate(score=Sum("puzzle__points"))
+            .values("score")
         ),
-        solve_count=Count('guesses', filter=Q(guesses__correct=True)),
+        solve_count=Count("guesses", filter=Q(guesses__correct=True)),
         last_solve=Subquery(
             Guess.objects.filter(
-                team=OuterRef('pk'),
+                team=OuterRef("pk"),
                 correct=True,
             )
-            .order_by('-time')[:1].values('time')
+            .order_by("-time")[:1]
+            .values("time")
         ),
-    ).order_by('-score', '-solve_count', 'last_solve')
+    ).order_by("-score", "-solve_count", "last_solve")
 
     print(teams.query)
 
-    return render(request, 'leaderboard.html', {
-        'hunt': hunt,
-        'team': team,
-        'teams': teams,
-        'is_organizer': is_organizer,
-    })
+    return render(
+        request,
+        "leaderboard.html",
+        {
+            "hunt": hunt,
+            "team": team,
+            "teams": teams,
+            "is_organizer": is_organizer,
+        },
+    )
+
 
 class GuessForm(forms.Form):
     guess = forms.CharField()
 
+
 def normalize_answer(answer):
-    return ''.join(c for c in answer if c.isalnum()).upper()
+    return "".join(c for c in answer if c.isalnum()).upper()
+
 
 def view_puzzle(request, hunt_id, puzzle_id):
     user = request.user
@@ -198,7 +240,9 @@ def view_puzzle(request, hunt_id, puzzle_id):
             except ExtraGuessGrant.DoesNotExist:
                 pass
 
-            guesses_remaining = guess_limit - Guess.objects.filter(puzzle=puzzle, team=team).count()
+            guesses_remaining = (
+                guess_limit - Guess.objects.filter(puzzle=puzzle, team=team).count()
+            )
             guesses_at_limit = guesses_remaining <= 0
         else:
             # hunt doesn't limit guesses
@@ -210,43 +254,51 @@ def view_puzzle(request, hunt_id, puzzle_id):
         guesses_remaining = 0
         guesses_at_limit = False
 
-    if request.method == 'POST':
+    if request.method == "POST":
         guess_form = GuessForm(request.POST)
 
         if solved:
             error = "You have already solved the puzzle!"
         elif not guesses_at_limit and guess_form.is_valid():
-            guess_text = normalize_answer(guess_form.cleaned_data['guess'])
-            if Guess.objects.filter(guess=guess_text, team=team, puzzle=puzzle).exists():
-                guess_form.add_error('guess', "You have already guessed that answer!")
+            guess_text = normalize_answer(guess_form.cleaned_data["guess"])
+            if Guess.objects.filter(
+                guess=guess_text, team=team, puzzle=puzzle
+            ).exists():
+                guess_form.add_error("guess", "You have already guessed that answer!")
             else:
                 guess = Guess(
                     guess=guess_text,
                     team=team,
                     user=user,
                     puzzle=puzzle,
-                    correct=(guess_text == normalize_answer(puzzle.answer)))
+                    correct=(guess_text == normalize_answer(puzzle.answer)),
+                )
                 guess.save()
 
                 if guess.correct:
                     solved = True
 
-                return redirect(urls.reverse('view_puzzle', args=[hunt_id, puzzle_id]))
+                return redirect(urls.reverse("view_puzzle", args=[hunt_id, puzzle_id]))
     else:
         guess_form = GuessForm()
 
-    return render(request, 'view_puzzle.html', {
-        'hunt': hunt,
-        'team': team,
-        'puzzle': puzzle,
-        'solved': solved,
-        'guesses_limited': guesses_limited,
-        'guesses_remaining': guesses_remaining,
-        'guesses_at_limit': guesses_at_limit,
-        'guesses': Guess.objects.filter(team=team, puzzle=puzzle).order_by('time'),
-        'guess_form': guess_form,
-        'is_organizer': is_organizer,
-    })
+    return render(
+        request,
+        "view_puzzle.html",
+        {
+            "hunt": hunt,
+            "team": team,
+            "puzzle": puzzle,
+            "solved": solved,
+            "guesses_limited": guesses_limited,
+            "guesses_remaining": guesses_remaining,
+            "guesses_at_limit": guesses_at_limit,
+            "guesses": Guess.objects.filter(team=team, puzzle=puzzle).order_by("time"),
+            "guess_form": guess_form,
+            "is_organizer": is_organizer,
+        },
+    )
+
 
 def view_puzzle_log(request, hunt_id, puzzle_id):
     user = request.user
@@ -258,31 +310,38 @@ def view_puzzle_log(request, hunt_id, puzzle_id):
     if not is_organizer:
         raise Http404("Puzzle stats are only viewable by organizers")
 
-    return render(request, 'view_puzzle_log.html', {
-        'hunt': hunt,
-        'puzzle': puzzle,
-        'guesses': Guess.objects.filter(puzzle=puzzle).order_by('time'),
-    })
+    return render(
+        request,
+        "view_puzzle_log.html",
+        {
+            "hunt": hunt,
+            "puzzle": puzzle,
+            "guesses": Guess.objects.filter(puzzle=puzzle).order_by("time"),
+        },
+    )
+
 
 class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
-        fields = ['name']
+        fields = ["name"]
+
 
 class InviteMemberForm(forms.Form):
     username = forms.CharField()
 
     def clean(self):
         cleaned_data = super().clean()
-        username = cleaned_data.get('username')
+        username = cleaned_data.get("username")
 
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             raise forms.ValidationError("No such user!")
 
-        cleaned_data['user'] = user
+        cleaned_data["user"] = user
         return cleaned_data
+
 
 @login_required
 def my_team(request, id):
@@ -294,8 +353,8 @@ def my_team(request, id):
     create_team_form = TeamForm()
     invite_member_form = InviteMemberForm()
 
-    if request.method == 'POST':
-        if 'create_team' in request.POST:
+    if request.method == "POST":
+        if "create_team" in request.POST:
             create_team_form = TeamForm(request.POST)
             if team:
                 create_team_form.add_error(None, "You are already in a team!")
@@ -306,56 +365,83 @@ def my_team(request, id):
                     team.save()
                     team.members.add(user)
 
-                    return redirect(urls.reverse('my_team', args=[id]))
-        elif 'invite_member' in request.POST:
+                    return redirect(urls.reverse("my_team", args=[id]))
+        elif "invite_member" in request.POST:
             invite_member_form = InviteMemberForm(request.POST)
             if not team:
-                invite_member_form.add_error(None, "You are not in a team, so you can't invite anybody!")
+                invite_member_form.add_error(
+                    None, "You are not in a team, so you can't invite anybody!"
+                )
             else:
                 if invite_member_form.is_valid():
-                    user_to_invite = invite_member_form.cleaned_data['user']
+                    user_to_invite = invite_member_form.cleaned_data["user"]
                     if hunt.organizers.filter(id=user_to_invite.id).exists():
-                        invite_member_form.add_error('username', "That user is an organizer!")
+                        invite_member_form.add_error(
+                            "username", "That user is an organizer!"
+                        )
                     elif team.members.filter(id=user_to_invite.id).exists():
-                        invite_member_form.add_error('username', "That user is already in the team!")
+                        invite_member_form.add_error(
+                            "username", "That user is already in the team!"
+                        )
                     elif team.invited_members.filter(id=user_to_invite.id).exists():
-                        invite_member_form.add_error('username', "That user has already been invited!")
+                        invite_member_form.add_error(
+                            "username", "That user has already been invited!"
+                        )
                     else:
                         team.invited_members.add(user_to_invite)
 
-                        return redirect(urls.reverse('my_team', args=[id]))
-        elif 'accept_invite' in request.POST:
+                        return redirect(urls.reverse("my_team", args=[id]))
+        elif "accept_invite" in request.POST:
             if team:
-                error = "You are already in a team, so you can't accept any invitations!"
+                error = (
+                    "You are already in a team, so you can't accept any invitations!"
+                )
             else:
                 try:
-                    inviting_team = Team.objects.get(id=request.POST['accept_invite'])
+                    inviting_team = Team.objects.get(id=request.POST["accept_invite"])
                     if inviting_team.invited_members.filter(id=user.id).exists():
                         inviting_team.members.add(user)
                         inviting_team.invited_members.remove(user)
 
-                        return redirect(urls.reverse('my_team', args=[id]))
+                        return redirect(urls.reverse("my_team", args=[id]))
                     else:
                         error = "You don't have an invitation to that team!"
                 except Team.DoesNotExist:
                     error = "You are not in a team, so you can't invite anybody!"
 
-    return render(request, 'my_team.html', {
-        'hunt': hunt,
-        'team': team,
-        'error': error,
-        'create_team_form': create_team_form,
-        'invite_member_form': invite_member_form,
-        'inviting_teams': Team.objects.filter(hunt=hunt, invited_members=user) if user.is_authenticated else [],
-        'is_organizer': not user.is_anonymous and hunt.organizers.filter(id=user.id).exists(),
-    })
+    return render(
+        request,
+        "my_team.html",
+        {
+            "hunt": hunt,
+            "team": team,
+            "error": error,
+            "create_team_form": create_team_form,
+            "invite_member_form": invite_member_form,
+            "inviting_teams": Team.objects.filter(hunt=hunt, invited_members=user)
+            if user.is_authenticated
+            else [],
+            "is_organizer": not user.is_anonymous
+            and hunt.organizers.filter(id=user.id).exists(),
+        },
+    )
+
 
 class PuzzleForm(forms.ModelForm):
     content = forms.CharField(widget=MarkdownTextarea, required=False)
 
     class Meta:
         model = Puzzle
-        fields = ['name', 'content', 'answer', 'points', 'order', 'progress_points', 'progress_threshold']
+        fields = [
+            "name",
+            "content",
+            "answer",
+            "points",
+            "order",
+            "progress_points",
+            "progress_threshold",
+        ]
+
 
 @login_required
 def new_puzzle(request, id):
@@ -365,21 +451,26 @@ def new_puzzle(request, id):
     if not hunt.organizers.filter(id=user.id).exists():
         return HttpResponse(status=403)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = PuzzleForm(request.POST)
         if form.is_valid():
             puzzle = form.save(commit=False)
             puzzle.hunt = hunt
             puzzle.save()
 
-            return redirect(urls.reverse('view_puzzle', args=[hunt.id, puzzle.id]))
+            return redirect(urls.reverse("view_puzzle", args=[hunt.id, puzzle.id]))
     else:
         form = PuzzleForm()
 
-    return render(request, 'new_puzzle.html', {
-        'hunt': hunt,
-        'form': form,
-    })
+    return render(
+        request,
+        "new_puzzle.html",
+        {
+            "hunt": hunt,
+            "form": form,
+        },
+    )
+
 
 @login_required
 def edit_puzzle(request, hunt_id, puzzle_id):
@@ -390,29 +481,40 @@ def edit_puzzle(request, hunt_id, puzzle_id):
     if not hunt.organizers.filter(id=user.id).exists():
         return HttpResponse(status=403)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = PuzzleForm(request.POST, instance=puzzle)
         if form.is_valid():
             puzzle = form.save()
-            return redirect(urls.reverse('view_puzzle', args=[hunt.id, puzzle.id]))
+            return redirect(urls.reverse("view_puzzle", args=[hunt.id, puzzle.id]))
     else:
         form = PuzzleForm(instance=puzzle)
 
-    return render(request, 'edit_puzzle.html', {
-        'hunt': hunt,
-        'puzzle': puzzle,
-        'form': form,
-    })
+    return render(
+        request,
+        "edit_puzzle.html",
+        {
+            "hunt": hunt,
+            "puzzle": puzzle,
+            "form": form,
+        },
+    )
+
 
 @csrf_exempt
 def preview_markdown(request):
-    if request.method == 'POST':
-        output = render_to_string('preview_markdown.html', { "input": request.body.decode('utf-8') })
-        return JsonResponse({
-            'success': True,
-            'output': output,
-        })
-    return JsonResponse({
-        'success': False,
-        'error': 'No markdown input received',
-    })
+    if request.method == "POST":
+        output = render_to_string(
+            "preview_markdown.html", {"input": request.body.decode("utf-8")}
+        )
+        return JsonResponse(
+            {
+                "success": True,
+                "output": output,
+            }
+        )
+    return JsonResponse(
+        {
+            "success": False,
+            "error": "No markdown input received",
+        }
+    )
