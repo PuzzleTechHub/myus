@@ -5,5 +5,5 @@ django==5.0.2
 gunicorn==21.2.0
 markdown==3.5.2
 psycopg2-binary==2.9.9
-python-dotenv==1.0.0
+python-dotenv==1.0.1
 whitenoise==6.6.0
