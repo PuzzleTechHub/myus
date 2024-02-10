@@ -130,15 +130,15 @@ A short list of Heroku specific changes we did in this codebase. It's not essent
 - [Other DBs like SQLite aren't a good fit for Heroku](https://devcenter.heroku.com/articles/sqlite3) because Heroku doesn't provide a "real" filesystem. Fortunately Heroku provides easy-to-use PostgreSQL, so we need to switch Django to use that instead. 
 - We install the `whitenoise` middleware so Django can serve static files directly in a production-ready way.
 
-# Why Myus?
+## Why Myus?
 
 The original version was called Ephesus. So we had to pick a different [Ionian League city](https://en.wikipedia.org/wiki/Ionian_League) for ourselves.
 
-# Credits
+## Credits
 
 This codebase is built off [Betaveros' Ephesus](https://github.com/betaveros/ephesus-public). 
 
-# Contributor Code of Conduct
+## Contributor Code of Conduct
 
 Be nice to each other. Also, everything in [Contributor Covenant version 1.4](https://www.contributor-covenant.org/version/1/4/code-of-conduct/)
 
