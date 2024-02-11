@@ -33,7 +33,7 @@ We recommend using [virtual environments](https://docs.python.org/3/tutorial/ven
 
 ```bash
 #Clone the code locally
-git clone https://github.com/Puzzle-Tech-Hub/myus.git
+git clone https://github.com/PuzzleTechHub/myus.git
 cd myus
 #Technically optional, but using virtualenv is usually a good idea
 virtualenv venv -p=3.10 
