@@ -61,7 +61,7 @@
 
 						preview.textContent = "Loading...";
 
-						fetch('{% url 'preview_markdown' %}', {
+						fetch("{% url 'preview_markdown' %}", {
 							method: 'POST',
 							body: textarea.value,
 						}).then((response) => response.json()).then((json) => {
