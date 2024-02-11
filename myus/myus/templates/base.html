@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="{% static "css/general.css" %}">
+		<link rel="stylesheet" href="{% static 'css/general.css' %}">
 		<link rel="shortcut icon" href="{% static 'favicon.ico' %}"/>
 		<title>{% block title %}myus{% endblock %}</title>
 	</head>
@@ -18,7 +18,10 @@
 			<div class="nav-user">
 			{% if request.user.is_authenticated %}
 			Logged in as {{ request.user.username }}
-			(<a href="{% url 'logout' %}">Logout</a>)
+			<form method="post" action="{% url 'logout' %}">
+				{% csrf_token %}
+				<button type="submit">logout</button>
+			</form>
 			{% else %}
 			<a href="{% url 'login' %}">Login</a> or
 			<a href="{% url 'register' %}">Register</a>
