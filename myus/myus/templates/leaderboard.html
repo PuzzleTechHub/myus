@@ -8,7 +8,7 @@
 
 {% if teams %}
 <table class="classic">
-    <tr><th>Team</th><th>Score</th><th>Solves</th><th>Last Solve (in some timezone idk)</th></tr>
+    <tr><th>Team</th><th>Score</th><th>Solves</th><th>Last Solve (UTC)</th></tr>
 	{% for team in teams %}
 	<tr>
 		<td>{{ team.name }}</td>
