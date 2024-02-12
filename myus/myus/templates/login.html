@@ -9,6 +9,7 @@ Login
 {% endif %}
 
 <form id="login" method="post">
+	Don't have an account? Just <a href="{% url 'register' %}">register!</a>
 	{% csrf_token %}
 	{{ form.non_field_errors }}
 

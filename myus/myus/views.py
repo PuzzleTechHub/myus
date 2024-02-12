@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, JsonResponse
 from django.db.models import OuterRef, Exists, Sum, Subquery, Count, Max, Q
+from django.db.models.functions import Cast, Coalesce
 from django.template.loader import render_to_string
 
 from django.contrib.auth.decorators import login_required
@@ -180,7 +181,7 @@ def leaderboard(request, id):
                 correct=True,
             )
             .values("puzzle__points")
-            .annotate(score=Sum("puzzle__points"))
+            .annotate(score=Coalesce(Sum('puzzle__points'), 0))
             .values("score")
         ),
         solve_count=Count("guesses", filter=Q(guesses__correct=True)),
