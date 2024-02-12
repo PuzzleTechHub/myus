@@ -78,6 +78,16 @@ heroku local release
 ```
 It's basically identical to calling the [Procfile](./Procfile) commands starting with "release" manually. 
 
+Note - That may not be sufficient to get the initial databases made. If so, also run - 
+```bash
+#Initial DB generation
+python myus/manage.py migrate --fake sessions zero
+#Test generation worked properly
+python myus/manage.py showmigrations
+#??? But related to Initial DB generation
+python myus/manage.py migrate --fake-initial
+```
+
 #### Local Runs - Every time
 
 You'll always need to make sure the PostgreSQL server is running before trying to run the server. For a final serving, you can use manage.py directly for local/dev work, but for prod, serving via [gunicorn](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-22-04) is recommended.
@@ -109,7 +119,7 @@ Our instance of the code is [hosted on Heroku](https://realpython.com/django-hos
 
 You will also need to set up the Postgresql database for the code using Heroku's PostgresSQL add-on. First [install the add-on](https://elements.heroku.com/addons/heroku-postgresql) then [set it up](https://devcenter.heroku.com/articles/heroku-postgresql) to attach your app to the Postgres. Now you can look at `Heroku - Dashboard - Resources - Add Ons` to look at the app on Heroku, and copy the URI given from Postgres add-on for your `DATABASE_URL`.
 
-**Make sure to `heroku config:set SECRET_KEY="YOUR_SECRET_KEY_HERE"`** to a securely generated long random string. Your app may still run if you don't do this step, but it will be insecure! Do the smae for everything defined in `.env`
+**Make sure to `heroku config:set SECRET_KEY="YOUR_SECRET_KEY_HERE"`** to a securely generated long random string. Your app may still run if you don't do this step, but it will be insecure! Do the same for everything defined in `.env`
 
 In theory, if you now visit `yourappname.herokuapp.com` you should see the properly styled front page of the website. (Heroku will automatically run `collectstatic` for you.) 
 
