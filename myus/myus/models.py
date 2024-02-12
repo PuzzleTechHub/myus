@@ -16,7 +16,7 @@ class User(AbstractUser):
     discord_username = models.CharField(
         max_length=500,
         blank=True,
-        help_text="Your Discord username and tag (e.g. example#1234). Not currently used for anything, but might be used in Discord integrations if they are implemented, since it appears that many hunts in the target audience are run over Discord.",
+        help_text="Your Discord username and tag (e.g. example). Not currently used for anything, but might be used in Discord integrations if they are implemented, since it appears that many hunts in the target audience are run over Discord.",
     )
     bio = models.TextField(blank=True, help_text="Tell us about yourself. Optional.")
     creation_time = models.DateTimeField(auto_now_add=True)
