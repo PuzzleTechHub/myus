@@ -1,4 +1,5 @@
 #Sets up the database
+release: python myus/manage.py makemigrations
 release: python myus/manage.py migrate
 #Sets up static files
 release: python myus/manage.py collectstatic --noinput
