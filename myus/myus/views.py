@@ -183,7 +183,6 @@ def leaderboard(request, id):
             .annotate(score=Sum("puzzle__points"))
             .values("score")
         ),
-        #creation_time = team.creation_time,
         solve_count=Count("guesses", filter=Q(guesses__correct=True)),
         last_solve=Subquery(
             Guess.objects.filter(
