@@ -4,9 +4,11 @@
 {% endblock %}
 {% block main %}
 <h1>New Hunt</h1>
-Note that currently, all new hunts are automatically PUBLIC! If you want to make a hunt just for testing, please ping us on the <a href="https://discord.gg/kgTK5eD7XY">PTH Discord</a><br><br>
-
-If you want to make a public hunt but for later, we currently recommend using a "dummy first puzzle" to gate everything else behind it. <br>
+Note that currently,<br>
+- <b>All new hunts are automatically public!</b><br>
+- If you want to just test Myus/how to make a hunt here, ping us on <a href="https://discord.gg/kgTK5eD7XY">PTH Discord</a>.<br>
+- If you want to edit/delete hunts, also ping us on the discord.<br>
+- On hunt start, everyone can see all starting puzzles. So if you want to make a public hunt for later (or just enforce start time), we recommend using a "dummy first puzzle" to gate everything else behind it.<br><br>
 <form method="post">
 	{% csrf_token %}
 	{{ form.non_field_errors }}
