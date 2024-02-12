@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 
 import django.forms as forms
 import django.urls as urls

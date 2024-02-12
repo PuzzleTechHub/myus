@@ -4,6 +4,9 @@
 {% endblock %}
 {% block main %}
 <h1>New Hunt</h1>
+Note that currently, all new hunts are automatically PUBLIC! If you want to make a hunt just for testing, please ping us on the <a href="https://discord.gg/kgTK5eD7XY">PTH Discord</a><br><br>
+
+If you want to make a public hunt but for later, we currently recommend using a "dummy first puzzle" to gate everything else behind it. <br>
 <form method="post">
 	{% csrf_token %}
 	{{ form.non_field_errors }}
