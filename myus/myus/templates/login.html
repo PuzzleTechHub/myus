@@ -5,7 +5,7 @@ Login
 {% block main %}
 
 {% if next %}
-	<p>Please login to see this page.</p>
+	<p>Please <a href="{% url 'login' %}">login</a> to see this page. Don't have an account? Just <a href="{% url 'register' %}">register!</a></p>
 {% endif %}
 
 <form id="login" method="post">
