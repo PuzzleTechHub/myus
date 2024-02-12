@@ -8,13 +8,14 @@
 
 {% if teams %}
 <table class="classic">
-    <tr><th>Team</th><th>Score</th><th>Solves</th><th>Last Solve (UTC)</th></tr>
+    <tr><th>Team</th><th>Score</th><th>Solves</th><th>Team Creation Time (UTC)</th><th>Last Solve (UTC)</th></tr>
 	{% for team in teams %}
 	<tr>
 		<td>{{ team.name }}</td>
 		<td>{{ team.score }}</td>
 		<td>{{ team.solve_count }}</td>
-		<td>{{ team.last_solve }}</td>
+		<td>{{ team.creation_time|date:'Y-m-d H:i'}}</td>
+		<td>{{ team.last_solve|date:'Y-m-d H:i'}}</td>
 	</tr>
 	{% endfor %}
 </table>
