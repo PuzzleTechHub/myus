@@ -99,12 +99,12 @@ class HuntForm(forms.ModelForm):
         model = Hunt
         fields = [
             "name",
+            "slug",
             "description",
             "start_time",
             "end_time",
             "member_limit",
             "guess_limit",
-            "slug",
         ]
 
 
@@ -484,6 +484,7 @@ class PuzzleForm(forms.ModelForm):
         model = Puzzle
         fields = [
             "name",
+            "slug",
             "content",
             "answer",
             "points",
