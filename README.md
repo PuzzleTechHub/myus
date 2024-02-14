@@ -126,7 +126,7 @@ You will need to first set up the Postgresql database for the code. To do it via
 If you don't want a paid service, you may want to use free Postgres alternatives, like Supabase ([Postgres Supabase installation guide](https://dev.to/prisma/set-up-a-free-postgresql-database-on-supabase-to-use-with-prisma-3pk6)). You'll need to figure out some of the installation yourself but for the codebase, you probably just need to edit `.env` and nothing else
 
 Next, [create your Heroku app](https://dev.to/ivadyhabimana/3-creating-your-first-heroku-app-3d1d) via command line or the website. For Heroku, you'll also need to translate all `.env` variables into [config values added](https://devcenter.heroku.com/articles/config-vars) to your database. You can add them using commands like `heroku config:set SECRET_KEY="YOUR_SECRET_KEY_HERE"`.
-Make sure to set **SECRET_KEY** to a securely generated long random string. Your app may still run if you don't do this step, but it will be insecure!
+Make sure to set `SECRET_KEY` to a securely generated long random string. Your app may still run if you don't do this step, but it will be insecure!
 
 Change Heroku settings to enable running your Heroku app, if necessary, then [deploy it](https://coding-boot-camp.github.io/full-stack/heroku/heroku-deployment-guide). If you've enabled all the settings and connected the app to the correct git directory, it should be as simple as running `git push heroku main`. In theory, if you now visit `yourappname.herokuapp.com` you should see the properly styled front page of the website. 
 
