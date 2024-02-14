@@ -38,7 +38,7 @@ cd myus
 #Technically optional, but using virtualenv is usually a good idea
 virtualenv venv -p=3.10 
 #This installs all the python dependancies the code needs
-pip install -r requirements.txt
+pip install -r requirements.txt && pre-commit install
 ```
 
 #### Handling Postgres
