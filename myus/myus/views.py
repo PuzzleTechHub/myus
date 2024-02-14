@@ -182,7 +182,7 @@ def leaderboard(request, id):
                 correct=True,
             )
             .values("puzzle__points")
-            .annotate(score=Coalesce(Sum('puzzle__points'), 0))
+            .annotate(score=Coalesce(Sum("puzzle__points"), 0))
             .values("score")
         ),
         solve_count=Count("guesses", filter=Q(guesses__correct=True)),
@@ -420,9 +420,11 @@ def my_team(request, id):
             "error": error,
             "create_team_form": create_team_form,
             "invite_member_form": invite_member_form,
-            "inviting_teams": Team.objects.filter(hunt=hunt, invited_members=user)
-            if user.is_authenticated
-            else [],
+            "inviting_teams": (
+                Team.objects.filter(hunt=hunt, invited_members=user)
+                if user.is_authenticated
+                else []
+            ),
             "is_organizer": not user.is_anonymous
             and hunt.organizers.filter(id=user.id).exists(),
         },
