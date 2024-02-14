@@ -156,6 +156,7 @@ The original version was called Ephesus. So we had to pick a different [Ionian L
 This codebase is built off [Betaveros' Ephesus](https://github.com/betaveros/ephesus-public). 
 
 Further development has continued in Puzzle Tech Hub. See [Puzzle Tech Hub github](https://github.com/PuzzleTechHub) for a list of other projects, and see link below for the discord. 
+
 [![](https://discordapp.com/api/guilds/1204637356863262801/widget.png?style=banner3)](https://discord.gg/kgTK5eD7XY)
 
 
