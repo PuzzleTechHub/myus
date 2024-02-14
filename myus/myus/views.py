@@ -101,6 +101,7 @@ class HuntForm(forms.ModelForm):
             "end_time",
             "member_limit",
             "guess_limit",
+            "slug",
         ]
 
 
@@ -114,7 +115,7 @@ def new_hunt(request):
             # needs save before we can do many-to-many stuff
             hunt.organizers.add(request.user)
 
-            return redirect(urls.reverse("view_hunt", args=[hunt.id]))
+            return redirect(urls.reverse("view_hunt", args=[hunt.slug]))
     else:
         form = HuntForm()
 
@@ -138,9 +139,9 @@ def get_team(user, hunt):
     # bad if MultipleObjectsReturned
 
 
-def view_hunt(request, id):
+def view_hunt(request, slug):
     user = request.user
-    hunt = get_object_or_404(Hunt, id=id)
+    hunt = get_object_or_404(Hunt, slug=slug)
     team = get_team(user, hunt)
     is_organizer = user.is_authenticated and hunt.organizers.filter(id=user.id).exists()
 
@@ -168,9 +169,9 @@ def view_hunt(request, id):
     )
 
 
-def leaderboard(request, id):
+def leaderboard(request, slug):
     user = request.user
-    hunt = get_object_or_404(Hunt, id=id)
+    hunt = get_object_or_404(Hunt, slug=slug)
     team = get_team(user, hunt)
     is_organizer = user.is_authenticated and hunt.organizers.filter(id=user.id).exists()
 
@@ -182,7 +183,7 @@ def leaderboard(request, id):
                 correct=True,
             )
             .values("puzzle__points")
-            .annotate(score=Coalesce(Sum('puzzle__points'), 0))
+            .annotate(score=Coalesce(Sum("puzzle__points"), 0))
             .values("score")
         ),
         solve_count=Count("guesses", filter=Q(guesses__correct=True)),
@@ -218,9 +219,9 @@ def normalize_answer(answer):
     return "".join(c for c in answer if c.isalnum()).upper()
 
 
-def view_puzzle(request, hunt_id, puzzle_id):
+def view_puzzle(request, hunt_slug, puzzle_id):
     user = request.user
-    hunt = get_object_or_404(Hunt, id=hunt_id)
+    hunt = get_object_or_404(Hunt, slug=hunt_slug)
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
     team = get_team(user, hunt)
 
@@ -302,9 +303,9 @@ def view_puzzle(request, hunt_id, puzzle_id):
     )
 
 
-def view_puzzle_log(request, hunt_id, puzzle_id):
+def view_puzzle_log(request, hunt_slug, puzzle_id):
     user = request.user
-    hunt = get_object_or_404(Hunt, id=hunt_id)
+    hunt = get_object_or_404(Hunt, slug=hunt_slug)
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
 
     is_organizer = user.is_authenticated and hunt.organizers.filter(id=user.id).exists()
@@ -346,9 +347,9 @@ class InviteMemberForm(forms.Form):
 
 
 @login_required
-def my_team(request, id):
+def my_team(request, slug):
     user = request.user
-    hunt = get_object_or_404(Hunt, id=id)
+    hunt = get_object_or_404(Hunt, slug=slug)
     team = get_team(user, hunt)
     error = None
 
@@ -420,9 +421,11 @@ def my_team(request, id):
             "error": error,
             "create_team_form": create_team_form,
             "invite_member_form": invite_member_form,
-            "inviting_teams": Team.objects.filter(hunt=hunt, invited_members=user)
-            if user.is_authenticated
-            else [],
+            "inviting_teams": (
+                Team.objects.filter(hunt=hunt, invited_members=user)
+                if user.is_authenticated
+                else []
+            ),
             "is_organizer": not user.is_anonymous
             and hunt.organizers.filter(id=user.id).exists(),
         },
@@ -446,9 +449,9 @@ class PuzzleForm(forms.ModelForm):
 
 
 @login_required
-def new_puzzle(request, id):
+def new_puzzle(request, slug):
     user = request.user
-    hunt = get_object_or_404(Hunt, id=id)
+    hunt = get_object_or_404(Hunt, slug=slug)
 
     if not hunt.organizers.filter(id=user.id).exists():
         return HttpResponse(status=403)
@@ -475,9 +478,9 @@ def new_puzzle(request, id):
 
 
 @login_required
-def edit_puzzle(request, hunt_id, puzzle_id):
+def edit_puzzle(request, hunt_slug, puzzle_id):
     user = request.user
-    hunt = get_object_or_404(Hunt, id=hunt_id)
+    hunt = get_object_or_404(Hunt, slug=hunt_slug)
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
 
     if not hunt.organizers.filter(id=user.id).exists():

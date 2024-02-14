@@ -55,6 +55,12 @@ class Hunt(models.Model):
         help_text="The default number of guesses teams get on each puzzle; 0 means unlimited",
         validators=[MinValueValidator(0)],
     )
+    slug = models.SlugField(
+        unique=True,
+        blank=True,
+        null=True,
+        help_text="A short, unique identifier for the hunt.",
+    )
 
     def public_puzzles(self):
         return self.puzzles.filter(progress_threshold__lte=self.progress_floor)
