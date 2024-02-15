@@ -55,7 +55,6 @@ class Hunt(models.Model):
         help_text="The default number of guesses teams get on each puzzle; 0 means unlimited",
         validators=[MinValueValidator(0)],
     )
-    slug = models.SlugField(help_text="A short, unique identifier for the hunt.")
 
     def public_puzzles(self):
         return self.puzzles.filter(progress_threshold__lte=self.progress_floor)
@@ -88,7 +87,6 @@ class Puzzle(models.Model):
         help_text="How many 'progress points' are necessary for a team to unlock this puzzle. In particular, puzzles with progress threshold ≤ the 'progress floor' of the hunt are public. (At the start of the hunt, the 'progress floor' will probably be 0 and puzzles with progress threshold 0 will be public.)",
         validators=[MinValueValidator(0)],
     )
-    slug = models.SlugField(help_text="A short, unique identifier for the puzzle.")
 
     def is_viewable_by(self, team):
         if team:

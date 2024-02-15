@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load markdown %}
 {% block nav %}
-» <a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a>
+» <a href="{% url 'view_hunt' hunt.id %}">{{ hunt.name }}</a>
 » {{ puzzle.name }}
 {% endblock %}
 {% block main %}
@@ -11,9 +11,9 @@
 {% if request.user.is_anonymous %}
 <p>You are not logged in! Log in to try solving the puzzle.</p>
 {% elif is_organizer %}
-<p>You are an organizer of this hunt! <a href="{% url 'edit_puzzle' puzzle.hunt.id puzzle.hunt.slug puzzle.id puzzle.slug %}">edit the puzzle</a></p>
+<p>You are an organizer of this hunt! <a href="{% url 'edit_puzzle' puzzle.hunt.id puzzle.id %}">edit the puzzle</a></p>
 {% elif not team %}
-<p>You aren't in a team signed up for this hunt! <a href="{% url 'my_team' puzzle.hunt.id puzzle.hunt.slug %}">Create or join</a> a team to try solving the puzzle.</p>
+<p>You aren't in a team signed up for this hunt! <a href="{% url 'my_team' puzzle.hunt.id %}">Create or join</a> a team to try solving the puzzle.</p>
 {% else %}
 	{% if solved %}
 		<p>You have solved this puzzle!</p>

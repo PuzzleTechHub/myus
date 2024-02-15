@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block nav %}
-» <a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a>
+» <a href="{% url 'view_hunt' hunt.id %}">{{ hunt.name }}</a>
 » Leaderboard
 {% endblock %}
 {% block main %}

@@ -37,5 +37,4 @@ staticfiles
 # VSCode
 \.vscode/
 
-# Direnv (see https://direnv.net/ )
-.envrc
+#myus/migrations/*
