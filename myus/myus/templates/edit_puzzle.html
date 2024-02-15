@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block nav %}
-» <a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a>
-» <a href="{% url 'view_puzzle' hunt.id hunt.slug puzzle.id puzzle.slug %}">{{ puzzle.name }}</a>
+» <a href="{% url 'view_hunt' hunt.id %}">{{ hunt.name }}</a>
+» <a href="{% url 'view_puzzle' hunt.id puzzle.id %}">{{ puzzle.name }}</a>
 » Edit
 {% endblock %}
 {% block main %}

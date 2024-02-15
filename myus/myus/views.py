@@ -1,6 +1,3 @@
-from functools import wraps
-from typing import Optional
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, JsonResponse
 from django.db.models import OuterRef, Exists, Sum, Subquery, Count, Max, Q
@@ -99,7 +96,6 @@ class HuntForm(forms.ModelForm):
         model = Hunt
         fields = [
             "name",
-            "slug",
             "description",
             "start_time",
             "end_time",
@@ -118,7 +114,7 @@ def new_hunt(request):
             # needs save before we can do many-to-many stuff
             hunt.organizers.add(request.user)
 
-            return redirect(urls.reverse("view_hunt", args=[hunt.slug]))
+            return redirect(urls.reverse("view_hunt", args=[hunt.id]))
     else:
         form = HuntForm()
 
@@ -142,47 +138,9 @@ def get_team(user, hunt):
     # bad if MultipleObjectsReturned
 
 
-def redirect_from_hunt_id_to_hunt_id_and_slug(view_func):
-    """ Redirect from a URL with a hunt ID to a URL with a hunt ID and a slug
-
-    Also redirect from a URL with a hunt ID and the wrong slug to the correct slug
-    """
-    @wraps(view_func)
-    def wrapper(request, hunt_id: int, *args, slug: Optional[str] = None, **kwargs):
-        hunt = get_object_or_404(Hunt, id=hunt_id)
-
-        if hunt.slug != slug:
-            view_name = urls.resolve(request.path_info).url_name
-            return redirect(view_name, hunt.id, hunt.slug)
-
-        return view_func(request, hunt_id, slug, *args, **kwargs)
-
-    return wrapper
-
-
-def force_url_to_include_both_hunt_and_puzzle_slugs(view_func):
-    """ Redirect from a URL missing a hunt or puzzle slug to one that includes them
-
-    Also redirect from a URL where the ID doesn't match the slug to the correct URL
-    """
-    @wraps(view_func)
-    def wrapper(request, hunt_id: int, puzzle_id: int, *args, hunt_slug: Optional[str] = None, puzzle_slug: Optional[str] = None, **kwargs):
-        hunt = get_object_or_404(Hunt, id=hunt_id)
-        puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
-
-        if hunt.slug != hunt_slug or puzzle.slug != puzzle_slug:
-            view_name = urls.resolve(request.path_info).url_name
-            return redirect(view_name, hunt_id=hunt.id, hunt_slug=hunt.slug, puzzle_id=puzzle.id, puzzle_slug=puzzle.slug)
-
-        return view_func(request, *args, hunt_id=hunt_id, hunt_slug=hunt_slug, puzzle_id=puzzle_id, puzzle_slug=puzzle_slug, **kwargs)
-
-    return wrapper
-
-
-@redirect_from_hunt_id_to_hunt_id_and_slug
-def view_hunt(request, hunt_id: int, slug: Optional[str] = None):
+def view_hunt(request, id):
     user = request.user
-    hunt = get_object_or_404(Hunt, id=hunt_id)
+    hunt = get_object_or_404(Hunt, id=id)
     team = get_team(user, hunt)
     is_organizer = user.is_authenticated and hunt.organizers.filter(id=user.id).exists()
 
@@ -210,10 +168,9 @@ def view_hunt(request, hunt_id: int, slug: Optional[str] = None):
     )
 
 
-@redirect_from_hunt_id_to_hunt_id_and_slug
-def leaderboard(request, hunt_id: int, slug: Optional[str] = None):
+def leaderboard(request, id):
     user = request.user
-    hunt = get_object_or_404(Hunt, id=hunt_id)
+    hunt = get_object_or_404(Hunt, id=id)
     team = get_team(user, hunt)
     is_organizer = user.is_authenticated and hunt.organizers.filter(id=user.id).exists()
 
@@ -261,8 +218,7 @@ def normalize_answer(answer):
     return "".join(c for c in answer if c.isalnum()).upper()
 
 
-@force_url_to_include_both_hunt_and_puzzle_slugs
-def view_puzzle(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[str] = None, puzzle_slug: Optional[str] = None):
+def view_puzzle(request, hunt_id, puzzle_id):
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
@@ -346,8 +302,7 @@ def view_puzzle(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[str] 
     )
 
 
-@force_url_to_include_both_hunt_and_puzzle_slugs
-def view_puzzle_log(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[str] = None, puzzle_slug: Optional[str] = None):
+def view_puzzle_log(request, hunt_id, puzzle_id):
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
@@ -391,10 +346,9 @@ class InviteMemberForm(forms.Form):
 
 
 @login_required
-@redirect_from_hunt_id_to_hunt_id_and_slug
-def my_team(request, hunt_id: int, slug: Optional[str] = None):
+def my_team(request, id):
     user = request.user
-    hunt = get_object_or_404(Hunt, id=hunt_id)
+    hunt = get_object_or_404(Hunt, id=id)
     team = get_team(user, hunt)
     error = None
 
@@ -413,7 +367,7 @@ def my_team(request, hunt_id: int, slug: Optional[str] = None):
                     team.save()
                     team.members.add(user)
 
-                    return redirect(urls.reverse("my_team", args=[hunt_id]))
+                    return redirect(urls.reverse("my_team", args=[id]))
         elif "invite_member" in request.POST:
             invite_member_form = InviteMemberForm(request.POST)
             if not team:
@@ -438,7 +392,7 @@ def my_team(request, hunt_id: int, slug: Optional[str] = None):
                     else:
                         team.invited_members.add(user_to_invite)
 
-                        return redirect(urls.reverse("my_team", args=[hunt_id]))
+                        return redirect(urls.reverse("my_team", args=[id]))
         elif "accept_invite" in request.POST:
             if team:
                 error = (
@@ -451,7 +405,7 @@ def my_team(request, hunt_id: int, slug: Optional[str] = None):
                         inviting_team.members.add(user)
                         inviting_team.invited_members.remove(user)
 
-                        return redirect(urls.reverse("my_team", args=[hunt_id]))
+                        return redirect(urls.reverse("my_team", args=[id]))
                     else:
                         error = "You don't have an invitation to that team!"
                 except Team.DoesNotExist:
@@ -484,7 +438,6 @@ class PuzzleForm(forms.ModelForm):
         model = Puzzle
         fields = [
             "name",
-            "slug",
             "content",
             "answer",
             "points",
@@ -494,11 +447,10 @@ class PuzzleForm(forms.ModelForm):
         ]
 
 
-@redirect_from_hunt_id_to_hunt_id_and_slug
 @login_required
-def new_puzzle(request, hunt_id: int, slug: Optional[str] = None):
+def new_puzzle(request, id):
     user = request.user
-    hunt = get_object_or_404(Hunt, id=hunt_id)
+    hunt = get_object_or_404(Hunt, id=id)
 
     if not hunt.organizers.filter(id=user.id).exists():
         return HttpResponse(status=403)
@@ -524,9 +476,8 @@ def new_puzzle(request, hunt_id: int, slug: Optional[str] = None):
     )
 
 
-@force_url_to_include_both_hunt_and_puzzle_slugs
 @login_required
-def edit_puzzle(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[str] = None, puzzle_slug: Optional[str] = None):
+def edit_puzzle(request, hunt_id, puzzle_id):
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
