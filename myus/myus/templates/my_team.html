@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% block nav %}
-» <a href="{% url 'view_hunt' hunt.id %}">{{ hunt.name }}</a>
+» <a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a>
 » My Team
 {% endblock %}
 {% load user_display %}
 {% block main %}
 <h1>Hunt: {{ hunt.name }}</h1>
-<a href="{% url 'leaderboard' hunt.id %}">leaderboard</a>
+<a href="{% url 'leaderboard' hunt.id hunt.slug %}">leaderboard</a>
 
 {% if error %}
 Error: {{ error }}
 {% endif %}
 
 {% if is_organizer %}
-<p>You are an organizer of this hunt. <a href="{% url 'new_puzzle' hunt.id %}">add puzzle</a></p>
+<p>You are an organizer of this hunt. <a href="{% url 'new_puzzle' hunt.id hunt.slug %}">add puzzle</a></p>
 {% elif team %}
 <p>You are on Team {{ team.name }}. Members:</p>
 
