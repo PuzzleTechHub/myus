@@ -176,14 +176,17 @@ def leaderboard(request, id):
 
     # for the sake of simplicity, assume teams won't end up with two correct guesses for a puzzle
     teams = hunt.teams.annotate(
-        score=Subquery(
-            Guess.objects.filter(
-                team=OuterRef("pk"),
-                correct=True,
-            )
-            .values("puzzle__points")
-            .annotate(score=Coalesce(Sum("puzzle__points"), 0))
-            .values("score")
+        score=Coalesce(
+            Subquery(
+                Guess.objects.filter(
+                    team=OuterRef("pk"),
+                    correct=True,
+                )
+                .values("team")
+                .annotate(score=Sum("puzzle__points"))
+                .values("score")
+            ),
+            0,
         ),
         solve_count=Count("guesses", filter=Q(guesses__correct=True)),
         last_solve=Subquery(
