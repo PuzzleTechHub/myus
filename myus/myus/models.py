@@ -85,7 +85,7 @@ class Puzzle(models.Model):
     )
     progress_threshold = models.IntegerField(
         default=0,
-        help_text="How many 'progress points' are necessary for a team to unlock this puzzle. In particular, puzzles with progress threshold ≤ the 'progress floor' of the hunt are public. (At the start of the hunt, the 'progress floor' will probably be 0 and puzzles with progress threshold 0 will be public.)",
+        help_text="How many 'progress points' are necessary for a team to unlock this puzzle. Puzzles with progress threshold ≤ 0 are public.",
         validators=[MinValueValidator(0)],
     )
     slug = models.SlugField(help_text="A short, unique identifier for the puzzle.")

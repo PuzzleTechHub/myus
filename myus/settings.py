@@ -137,7 +137,7 @@ SECURE_HSTS_PRELOAD = False
 # what errors to silence when running this
 SILENCED_SYSTEM_CHECKS = ["security.W018", "security.W020", "models.W042"]
 SILENCED_SYSTEM_CHECKS = []
-# DEFAULT_AUTO_FIELD = "" #'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # https://docs.djangoproject.com/en/3.1/topics/logging/
