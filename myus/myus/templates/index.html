@@ -11,7 +11,7 @@ Any other bugs or feature requests? Find us at <a href="https://github.com/Puzzl
 {% if hunts %}
 <ul>
 	{% for hunt in hunts %}
-	<li><a href="{% url 'view_hunt' hunt.id %}">{{ hunt.name }}</a> by 
+	<li><a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a> by
 		{% for organizer in hunt.organizers.all %}
 			{{ organizer.username }}
 	 	{% endfor %}

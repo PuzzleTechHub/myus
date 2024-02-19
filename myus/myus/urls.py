@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from django.contrib.auth.views import (
     LoginView,
     LogoutView,
@@ -23,22 +23,27 @@ urlpatterns = [
     ),
     path("register", views.register, name="register"),
     path("new", views.new_hunt, name="new_hunt"),
-    path("hunt/<int:id>", views.view_hunt, name="view_hunt"),
-    path("hunt/<int:id>/team", views.my_team, name="my_team"),
-    path("hunt/<int:id>/new", views.new_puzzle, name="new_puzzle"),
-    path("hunt/<int:id>/leaderboard", views.leaderboard, name="leaderboard"),
-    path(
-        "hunt/<int:hunt_id>/puzzle/<int:puzzle_id>",
+    path("hunt/<int:hunt_id>", views.view_hunt, name="view_hunt"),
+    path("hunt/<int:hunt_id>-<slug:slug>", views.view_hunt, name="view_hunt"),
+    path("hunt/<int:hunt_id>/team", views.my_team, name="my_team"),
+    path("hunt/<int:hunt_id>-<slug:slug>/team", views.my_team, name="my_team"),
+    path("hunt/<int:hunt_id>/new", views.new_puzzle, name="new_puzzle"),
+    path("hunt/<int:hunt_id>-<slug:slug>/new", views.new_puzzle, name="new_puzzle"),
+    path("hunt/<int:hunt_id>/leaderboard", views.leaderboard, name="leaderboard"),
+    path("hunt/<int:hunt_id>-<slug:slug>/leaderboard", views.leaderboard, name="leaderboard"),
+    # The regex is complicated; it's saying A) the literal "/hunt/", B) a hunt_id made of digits, C) optionally a hyphen and then a hunt slug (made of letters, digits, hyphens, or underscores), D) the literal "/puzzle/", E) a puzzle_id made up of digits, F) optionally a hyphen and then a puzzle slug
+    re_path(
+        r"^hunt/(?P<hunt_id>\d+)(?:-(?P<hunt_slug>[-\w]+))?/puzzle/(?P<puzzle_id>\d+)(?:-(?P<puzzle_slug>[-\w]+))?$",
         views.view_puzzle,
         name="view_puzzle",
     ),
-    path(
-        "hunt/<int:hunt_id>/puzzle/<int:puzzle_id>/edit",
+    re_path(
+        r"^hunt/(?P<hunt_id>\d+)(?:-(?P<hunt_slug>[-\w]+))?/puzzle/(?P<puzzle_id>\d+)(?:-(?P<puzzle_slug>[-\w]+))?/edit$",
         views.edit_puzzle,
         name="edit_puzzle",
     ),
-    path(
-        "hunt/<int:hunt_id>/puzzle/<int:puzzle_id>/log",
+    re_path(
+        r"^hunt/(?P<hunt_id>\d+)(?:-(?P<hunt_slug>[-\w]+))?/puzzle/(?P<puzzle_id>\d+)(?:-(?P<puzzle_slug>[-\w]+))?/log$",
         views.view_puzzle_log,
         name="view_puzzle_log",
     ),
