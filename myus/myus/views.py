@@ -118,7 +118,7 @@ def new_hunt(request):
             # needs save before we can do many-to-many stuff
             hunt.organizers.add(request.user)
 
-            return redirect(urls.reverse("view_hunt", args=[hunt.slug]))
+            return redirect(urls.reverse("view_hunt", args=[hunt.pk,hunt.slug]))
     else:
         form = HuntForm()
 
