@@ -35,6 +35,7 @@ SAFE_TAGS = [
     "sub",
     "sup",
     "ul",
+    "img",
 ]
 
 # LinkifyFilter converts raw URLs in text into links
