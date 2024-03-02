@@ -26,11 +26,12 @@
 
 {% if puzzles %}
 <table class="classic">
-	<tr><th>Puzzle</th><th>Solved?</th><th>Solves</th><th>Guesses</th></tr>
+	<tr><th>Puzzle</th><th>Solved?</th><th>Answer</th><th>Solves</th><th>Guesses</th></tr>
 {% for puzzle in puzzles %}
 	<tr>
 		<td><a href="{% url 'view_puzzle' hunt.id hunt.slug puzzle.id puzzle.slug %}">{{ puzzle.name }}</a></td>
-		<td>{% if puzzle.solved %}✅{% endif %}</td>
+		<td>{% if puzzle.correct_guess %}✅{% endif %}</td>
+		<td>{% if puzzle.correct_guess %}{{ puzzle.correct_guess }}{% endif %}</td>
 		<td>{{ puzzle.solve_count }}</td>
 		<td>{{ puzzle.guess_count }}</td>
 	</tr>
