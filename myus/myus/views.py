@@ -1,20 +1,25 @@
 from functools import wraps
 from typing import Optional
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import Http404, JsonResponse
-from django.db.models import OuterRef, Exists, Sum, Subquery, Count, Max, Q
-from django.db.models.functions import Cast, Coalesce
-from django.template.loader import render_to_string
-
+from django import urls
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
+from django.db.models import OuterRef, Sum, Subquery, Count, Q
+from django.db.models.functions import Coalesce
+from django.http import Http404, JsonResponse
 from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
 
-import django.forms as forms
-import django.urls as urls
-
-from .models import Hunt, User, Team, Puzzle, Guess, ExtraGuessGrant
+from .forms import (
+    GuessForm,
+    HuntForm,
+    InviteMemberForm,
+    PuzzleForm,
+    RegisterForm,
+    TeamForm
+)
+from .models import Hunt, Team, Puzzle, Guess, ExtraGuessGrant
 
 
 def index(request):
@@ -29,56 +34,6 @@ def index(request):
     )
 
 
-class MarkdownTextarea(forms.Textarea):
-    template_name = "widgets/markdown_textarea.html"
-
-
-# based on UserCreationForm from Django source
-class RegisterForm(forms.ModelForm):
-    """
-    A form that creates a user, with no privileges, from the given username and
-    password.
-    """
-
-    password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
-    password2 = forms.CharField(
-        label="Password confirmation",
-        widget=forms.PasswordInput,
-        help_text="Enter the same password as above, for verification.",
-    )
-    email = forms.EmailField(
-        label="Email address",
-        required=False,
-        help_text="Optional, but you'll get useful email notifications when we implement those.",
-    )
-    bio = forms.CharField(
-        widget=MarkdownTextarea,
-        required=False,
-        help_text="(optional) Tell us about yourself. What kinds of puzzle genres or subject matter do you like?",
-    )
-
-    class Meta:
-        model = User
-        fields = ("username", "email", "display_name", "discord_username", "bio")
-
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError(
-                "The two password fields didn't match.",
-                code="password_mismatch",
-            )
-        return password2
-
-    def save(self, commit=True):
-        user = super(RegisterForm, self).save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
-        return user
-
-
 def register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -90,22 +45,6 @@ def register(request):
     else:
         form = RegisterForm()
         return render(request, "register.html", {"form": form})
-
-
-class HuntForm(forms.ModelForm):
-    description = forms.CharField(widget=MarkdownTextarea, required=False)
-
-    class Meta:
-        model = Hunt
-        fields = [
-            "name",
-            "slug",
-            "description",
-            "start_time",
-            "end_time",
-            "member_limit",
-            "guess_limit",
-        ]
 
 
 @login_required
@@ -256,10 +195,6 @@ def leaderboard(request, hunt_id: int, slug: Optional[str] = None):
     )
 
 
-class GuessForm(forms.Form):
-    guess = forms.CharField()
-
-
 def normalize_answer(answer):
     return "".join(c for c in answer if c.isalnum()).upper()
 
@@ -371,28 +306,6 @@ def view_puzzle_log(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[s
     )
 
 
-class TeamForm(forms.ModelForm):
-    class Meta:
-        model = Team
-        fields = ["name"]
-
-
-class InviteMemberForm(forms.Form):
-    username = forms.CharField()
-
-    def clean(self):
-        cleaned_data = super().clean()
-        username = cleaned_data.get("username")
-
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            raise forms.ValidationError("No such user!")
-
-        cleaned_data["user"] = user
-        return cleaned_data
-
-
 @login_required
 @redirect_from_hunt_id_to_hunt_id_and_slug
 def my_team(request, hunt_id: int, slug: Optional[str] = None):
@@ -478,23 +391,6 @@ def my_team(request, hunt_id: int, slug: Optional[str] = None):
             and hunt.organizers.filter(id=user.id).exists(),
         },
     )
-
-
-class PuzzleForm(forms.ModelForm):
-    content = forms.CharField(widget=MarkdownTextarea, required=False)
-
-    class Meta:
-        model = Puzzle
-        fields = [
-            "name",
-            "slug",
-            "content",
-            "answer",
-            "points",
-            "order",
-            "progress_points",
-            "progress_threshold",
-        ]
 
 
 @redirect_from_hunt_id_to_hunt_id_and_slug

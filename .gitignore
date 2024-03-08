@@ -37,5 +37,8 @@ staticfiles
 # VSCode
 \.vscode/
 
+# PyCharm
+.idea/
+
 # Direnv (see https://direnv.net/ )
 .envrc
