@@ -613,7 +613,10 @@ def edit_puzzle(
         if form.is_valid() and formset.is_valid():
             puzzle = form.save()
             formset = formset.save()
-            return redirect(urls.reverse("view_puzzle", args=[hunt.id, puzzle.id]))
+            if request.POST.get("submit", "") == "Submit":
+                return redirect(urls.reverse("view_puzzle", args=[hunt.id, puzzle.id]))
+            else:
+                return redirect(urls.reverse("edit_puzzle", args=[hunt.id, puzzle.id]))
     else:
         form = PuzzleForm(instance=puzzle)
         formset = PuzzleFormSet(instance=puzzle)
