@@ -23,6 +23,21 @@
                 Guesses that trigger a response do not count as a guess.
 
 
+
+                <div id="empty_form" class="guessresponse-form" style="display: none">
+                    {{  formset.empty_form.non_field_errors }}
+                    <p>
+                        {{  formset.empty_form.guess.label_tag }} {{  formset.empty_form.guess}} {{  formset.empty_form.guess.error }}
+                        {{  formset.empty_form.response.label_tag }} {{  formset.empty_form.response}} {{  formset.empty_form.response.error }}
+                        {{  formset.empty_form.DELETE.label_tag }} {{  formset.empty_form.DELETE}}
+                    </p>
+                    {% for hidden in  formset.empty_form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                </div>
+
+
+
                 {% for gr_form in formset.forms %}
                     <div class="guessresponse-form">
                         {{ gr_form.non_field_errors }}
@@ -36,10 +51,38 @@
                         {% endfor %}
                     </div>
                 {% endfor %}
+                <button id="add-form" type="button">Add row</button>
 
             </td>
         </table>
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" name="submit">
+        <input type="submit" value="Save and continue editing" name="submit">
     </form>
+
+
+
+    <script type="text/javascript">
+        let grForm = document.querySelectorAll(".guessresponse-form")
+        let emptyForm = document.querySelector("#empty_form")
+        let container = document.querySelector("#form-container")
+        let addButton = document.querySelector("#add-form")
+        let totalForms = document.querySelector("#id_guess_responses-TOTAL_FORMS")
+        let formNum = grForm.length-1
+        addButton.addEventListener('click', addForm)
+
+
+        function addForm(e) {
+            e.preventDefault()
+            formNum++
+            let newForm = emptyForm.cloneNode(true)
+            newForm.innerHTML = newForm.innerHTML.replace(RegExp(`guess_responses-__prefix__-`,'g'), `guess_responses-${formNum}-`)
+            newForm.removeAttribute('id');
+            newForm.removeAttribute('style');
+            container.insertBefore(newForm, addButton)
+            totalForms.setAttribute('value', `${formNum+1}`)
+        }
+
+    </script>
+
 
 {% endblock %}
