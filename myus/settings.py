@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
+
 import os
 import sys
 import dj_database_url
@@ -114,14 +115,13 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-# STATIC_ROOT = 'staticfiles'
-# STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.normpath(BASE_DIR)
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(os.path.normpath(BASE_DIR), "staticfiles")
-STATIC_URL = os.path.join(os.path.normpath(BASE_DIR), "static/")
+# STATIC_URL = os.path.join(os.path.normpath(BASE_DIR), "static/")
 
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "/"
@@ -137,7 +137,7 @@ SECURE_HSTS_PRELOAD = False
 # what errors to silence when running this
 SILENCED_SYSTEM_CHECKS = ["security.W018", "security.W020", "models.W042"]
 SILENCED_SYSTEM_CHECKS = []
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # https://docs.djangoproject.com/en/3.1/topics/logging/
