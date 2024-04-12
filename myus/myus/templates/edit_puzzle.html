@@ -27,25 +27,29 @@
                 <div id="empty_form" class="guessresponse-form" style="display: none">
                     {{  formset.empty_form.non_field_errors }}
                     <p>
-                        {{  formset.empty_form.guess.label_tag }} {{  formset.empty_form.guess}} {{  formset.empty_form.guess.error }}
-                        {{  formset.empty_form.response.label_tag }} {{  formset.empty_form.response}} {{  formset.empty_form.response.error }}
-                        {{  formset.empty_form.DELETE.label_tag }} {{  formset.empty_form.DELETE}}
+                        {{ formset.empty_form.guess.label_tag }} {{ formset.empty_form.guess}}
+                        {{ formset.empty_form.response.label_tag }} {{ formset.empty_form.response}}
+                        {{ formset.empty_form.DELETE.label_tag }} {{ formset.empty_form.DELETE}}
                     </p>
+                    {{ formset.empty_form.guess.errors }}
+                    {{ formset.empty_form.response.errors }}
                     {% for hidden in  formset.empty_form.hidden_fields %}
                         {{ hidden }}
                     {% endfor %}
                 </div>
 
 
-
+                {{ formset.non_form_errors }}
                 {% for gr_form in formset.forms %}
                     <div class="guessresponse-form">
                         {{ gr_form.non_field_errors }}
                         <p>
-                            {{ gr_form.guess.label_tag }} {{ gr_form.guess}} {{ gr_form.guess.error }}
-                            {{ gr_form.response.label_tag }} {{ gr_form.response}} {{ gr_form.response.error }}
+                            {{ gr_form.guess.label_tag }} {{ gr_form.guess}}
+                            {{ gr_form.response.label_tag }} {{ gr_form.response}}
                             {{ gr_form.DELETE.label_tag }} {{ gr_form.DELETE}}
                         </p>
+                        {{ gr_form.guess.errors }}
+                        {{ gr_form.response.errors }}
                         {% for hidden in gr_form.hidden_fields %}
                             {{ hidden }}
                         {% endfor %}
@@ -75,9 +79,9 @@
             e.preventDefault()
             formNum++
             let newForm = emptyForm.cloneNode(true)
-            newForm.innerHTML = newForm.innerHTML.replace(RegExp(`guess_responses-__prefix__-`,'g'), `guess_responses-${formNum}-`)
-            newForm.removeAttribute('id');
-            newForm.removeAttribute('style');
+            newForm.innerHTML = newForm.innerHTML.replace(/guess_responses-__prefix__-/g, `guess_responses-${formNum}-`)
+            newForm.removeAttribute('id')
+            newForm.removeAttribute('style')
             container.insertBefore(newForm, addButton)
             totalForms.setAttribute('value', `${formNum+1}`)
         }
