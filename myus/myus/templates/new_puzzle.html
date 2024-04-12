@@ -5,57 +5,59 @@
 {% endblock %}
 {% block main %}
     <h1>New Puzzle</h1>
-    {% csrf_token %}
-    {{ form.non_field_errors }}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
 
-    <table class="classic">
-        {{ form.as_table }}
-        <th>
-            Partial answer confirmation:
-        </th>
-        <td id="form-container">
-            {% csrf_token %}
-            {{ formset.management_form }}
-            Optional partial confirmation of answers: if a certain guess is made, then the response will be shown.
-            Can be used to show solvers are on the right track, or to request solvers to do something special.
-            Guesses that trigger a response do not count as a guess.
-
-
-
-            <div id="empty_form" class="guessresponse-form" style="display: none">
-                {{  formset.empty_form.non_field_errors }}
-                <p>
-                    {{ formset.empty_form.guess.label_tag }} {{ formset.empty_form.guess}}
-                    {{ formset.empty_form.response.label_tag }} {{ formset.empty_form.response}}
-                </p>
-                {{ formset.empty_form.guess.errors }}
-                {{ formset.empty_form.response.errors }}
-                {% for hidden in  formset.empty_form.hidden_fields %}
-                    {{ hidden }}
-                {% endfor %}
-            </div>
+        <table class="classic">
+            {{ form.as_table }}
+            <th>
+                Partial answer confirmation:
+            </th>
+            <td id="form-container">
+                {% csrf_token %}
+                {{ formset.management_form }}
+                Optional partial confirmation of answers: if a certain guess is made, then the response will be shown.
+                Can be used to show solvers are on the right track, or to request solvers to do something special.
+                Guesses that trigger a response do not count as a guess.
 
 
-            {{ formset.non_form_errors }}
-            {% for gr_form in formset.forms %}
-                <div class="guessresponse-form">
-                    {{ gr_form.non_field_errors }}
+
+                <div id="empty_form" class="guessresponse-form" style="display: none">
+                    {{  formset.empty_form.non_field_errors }}
                     <p>
-                        {{ gr_form.guess.label_tag }} {{ gr_form.guess}}
-                        {{ gr_form.response.label_tag }} {{ gr_form.response}}
+                        {{ formset.empty_form.guess.label_tag }} {{ formset.empty_form.guess}}
+                        {{ formset.empty_form.response.label_tag }} {{ formset.empty_form.response}}
+                        {{ formset.empty_form.delete.DELETE }} {{ formset.empty_form.DELETE}}
                     </p>
-                    {{ gr_form.guess.errors }}
-                    {{ gr_form.response.errors }}
-                    {% for hidden in gr_form.hidden_fields %}
+                    {{ formset.empty_form.guess.errors }}
+                    {{ formset.empty_form.response.errors }}
+                    {% for hidden in  formset.empty_form.hidden_fields %}
                         {{ hidden }}
                     {% endfor %}
                 </div>
-            {% endfor %}
-            <button id="add-form" type="button">Add row</button>
 
-        </td>
-    </table>
-    <input type="submit" value="Submit" name="submit">
+                {{ formset.non_form_errors }}
+                {% for gr_form in formset.forms %}
+                    <div class="guessresponse-form">
+                        {{ gr_form.non_field_errors }}
+                        <p>
+                            {{ gr_form.guess.label_tag }} {{ gr_form.guess}}
+                            {{ gr_form.response.label_tag }} {{ gr_form.response}}
+                            {{ gr_form.DELETE.label_tag }} {{ gr_form.DELETE}}
+                        </p>
+                        {{ gr_form.guess.errors }}
+                        {{ gr_form.response.errors }}
+                        {% for hidden in gr_form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <button id="add-form" type="button">Add row</button>
+
+            </td>
+        </table>
+        <input type="submit" value="Submit" name="submit">
     </form>
 
 
