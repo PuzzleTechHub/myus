@@ -75,6 +75,10 @@ table.classic th.small {
     font-size: 85%;
 }
 
+samp {
+	font-size: 1.2em;
+}
+
 h1 {
 	margin-top: 0;
 }

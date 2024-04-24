@@ -2,7 +2,7 @@ from django.db import models
 
 from django.contrib.auth.models import AbstractUser
 
-from django.db.models import OuterRef, Exists, Sum, Q
+from django.db.models import Subquery, OuterRef, Exists, Sum, Q
 
 from django.core.validators import MinValueValidator
 
@@ -153,8 +153,8 @@ class Team(models.Model):
 
     def unlocked_puzzles_with_solved(self):
         return self.unlocked_puzzles().annotate(
-            solved=Exists(
-                Guess.objects.filter(team=self, puzzle=OuterRef("pk"), correct=True)
+            correct_guess=Subquery(
+                Guess.objects.filter(team=self, puzzle=OuterRef("pk"), correct=True).values('guess')
             ),
         )
 
