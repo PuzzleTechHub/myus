@@ -1,51 +1,98 @@
 {% extends "base.html" %}
 {% load markdown %}
 {% block nav %}
-» <a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a>
-» {{ puzzle.name }}
+    » <a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a>
+    » {{ puzzle.name }}
 {% endblock %}
 {% block main %}
-<h1>Puzzle: {{ puzzle.name }}</h1>
+    <h1>Puzzle: {{ puzzle.name }}</h1>
 
-<div class="guesses">
-{% if request.user.is_anonymous %}
-<p>You are not logged in! Log in to try solving the puzzle.</p>
-{% elif is_organizer %}
-<p>You are an organizer of this hunt! <a href="{% url 'edit_puzzle' puzzle.hunt.id puzzle.hunt.slug puzzle.id puzzle.slug %}">edit the puzzle</a></p>
-{% elif not team %}
-<p>You aren't in a team signed up for this hunt! <a href="{% url 'my_team' puzzle.hunt.id puzzle.hunt.slug %}">Create or join</a> a team to try solving the puzzle.</p>
-{% else %}
-	{% if solved %}
-		<p>You have solved this puzzle!</p>
-	{% elif guesses_at_limit %}
-		<p>You have no more guesses left!</p>
-	{% else %}
+    <div class="guesses">
+        {% if request.user.is_anonymous %}
+            <p>You are not logged in! Log in to try solving the puzzle.</p>
+        {% elif is_organizer %}
+            <p>You are an organizer of this hunt! <a href="{% url 'edit_puzzle' puzzle.hunt.id puzzle.hunt.slug puzzle.id puzzle.slug %}">edit the puzzle</a></p>
+        {% elif not team %}
+            <p>You aren't in a team signed up for this hunt! <a href="{% url 'my_team' puzzle.hunt.id puzzle.hunt.slug %}">Create or join</a> a team to try solving the puzzle.</p>
+        {% else %}
+            {% if solved %}
+                <p>You have solved this puzzle!</p>
+            {% elif guesses_at_limit %}
+                <p>You have no more guesses left!</p>
+            {% else %}
 
-	{% if guesses_limited %}
-		<p>You have {{ guesses_remaining }} guess{{ guesses_remaining|pluralize:"es" }} left!</p>
-	{% endif %}
+                {% if guesses_limited %}
+                    <p>You have {{ guesses_remaining }} guess{{ guesses_remaining|pluralize:"es" }} left!</p>
+                {% endif %}
 
-	<form method="POST">
-		<table class="classic">
-		{{ guess_form.non_form_errors }}
-		{% csrf_token %}
-		{{ guess_form.as_table }}
-		</table>
-		<input type="submit" value="Submit" />
-	</form>
-{% endif %}
+                <form method="POST">
+                    <table class="classic">
+                        {{ guess_form.non_form_errors }}
+                        {% csrf_token %}
+                        {{ guess_form.as_table }}
+                    </table>
+                    <input type="submit" value="Submit" />
+                </form>
+            {% endif %}
 
-<p>Past guesses:</p>
-<ul>
-{% for guess in guesses %}
-<li>{{ guess.guess }}{% if guess.correct %} (correct){% endif %}</li>
-{% endfor %}
-</ul>
+            <p>Past guesses:</p>
+            <table style="width: 100%; text-align: center">
 
-{% endif %}
-</div>
+                <colgroup>
+                    <col span="1" style="width: 33%;">
+                    <col span="1" style="width: 34%;">
+                    <col span="1" style="width: 33%;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Guess</th>
+                        <th>Status</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for guess in guesses %}
+                        <tr>
+                            <td>
+                                {% if guess.correct %}
+                                    <strong>{{ guess.guess }}</strong>
+                                {% else %}
+                                    {{ guess.guess }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if guess.correct %}
+                                    <strong>Correct!</strong>
+                                {% else %}
+                                    {% if guess.response != "" %}
+                                        {{ guess.response }}
+                                    {% else %}
+                                        Incorrect
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if guess.correct %}
+                                    <strong>{{ guess.time }}</strong>
+                                {% else %}
+                                    {{ guess.time }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
-<hr />
 
-{{ puzzle.content|markdown }}
+
+
+
+
+
+        {% endif %}
+    </div>
+
+    <hr />
+
+    {{ puzzle.content|markdown }}
 {% endblock %}

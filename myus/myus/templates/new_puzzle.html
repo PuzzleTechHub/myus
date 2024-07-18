@@ -1,18 +1,89 @@
 {% extends "base.html" %}
 {% block nav %}
-» <a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a>
-» New Puzzle
+    » <a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a>
+    » New Puzzle
 {% endblock %}
 {% block main %}
-<h1>New Puzzle</h1>
-<form method="post">
-	{% csrf_token %}
-	{{ form.non_field_errors }}
+    <h1>New Puzzle</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
 
-	<table class="classic">
-		{{ form.as_table }}
-	</table>
-	<input type="submit" value="Submit">
-</form>
+        <table class="classic">
+            {{ form.as_table }}
+            <th>
+                Partial answer confirmation:
+            </th>
+            <td id="form-container">
+                {% csrf_token %}
+                {{ formset.management_form }}
+                Optional partial confirmation of answers: if a certain guess is made, then the response will be shown.
+                Can be used to show solvers are on the right track, or to request solvers to do something special.
+                Guesses that trigger a response do not count as a guess.
+
+
+
+                <div id="empty_form" class="guessresponse-form" style="display: none">
+                    {{  formset.empty_form.non_field_errors }}
+                    <p>
+                        {{ formset.empty_form.guess.label_tag }} {{ formset.empty_form.guess}}
+                        {{ formset.empty_form.response.label_tag }} {{ formset.empty_form.response}}
+                        {{ formset.empty_form.delete.DELETE }} {{ formset.empty_form.DELETE}}
+                    </p>
+                    {{ formset.empty_form.guess.errors }}
+                    {{ formset.empty_form.response.errors }}
+                    {% for hidden in  formset.empty_form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                </div>
+
+                {{ formset.non_form_errors }}
+                {% for gr_form in formset.forms %}
+                    <div class="guessresponse-form">
+                        {{ gr_form.non_field_errors }}
+                        <p>
+                            {{ gr_form.guess.label_tag }} {{ gr_form.guess}}
+                            {{ gr_form.response.label_tag }} {{ gr_form.response}}
+                            {{ gr_form.DELETE.label_tag }} {{ gr_form.DELETE}}
+                        </p>
+                        {{ gr_form.guess.errors }}
+                        {{ gr_form.response.errors }}
+                        {% for hidden in gr_form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <button id="add-form" type="button">Add row</button>
+
+            </td>
+        </table>
+        <input type="submit" value="Submit" name="submit">
+    </form>
+
+
+
+    <script type="text/javascript">
+        let grForm = document.querySelectorAll(".guessresponse-form")
+        let emptyForm = document.querySelector("#empty_form")
+        let container = document.querySelector("#form-container")
+        let addButton = document.querySelector("#add-form")
+        let totalForms = document.querySelector("#id_guess_responses-TOTAL_FORMS")
+        let formNum = grForm.length-1
+        addButton.addEventListener('click', addForm)
+
+
+        function addForm(e) {
+            e.preventDefault()
+            formNum++
+            let newForm = emptyForm.cloneNode(true)
+            newForm.innerHTML = newForm.innerHTML.replace(/guess_responses-__prefix__-/g, `guess_responses-${formNum}-`)
+            newForm.removeAttribute('id')
+            newForm.removeAttribute('style')
+            container.insertBefore(newForm, addButton)
+            totalForms.setAttribute('value', `${formNum+1}`)
+        }
+
+    </script>
+
 
 {% endblock %}

@@ -113,7 +113,7 @@ class GuessResponse(models.Model):
         Puzzle, on_delete=models.CASCADE, related_name="guess_responses"
     )
     guess = models.CharField(max_length=500)
-    response = models.TextField()
+    response = models.CharField(max_length=500)
 
     class Meta:
         unique_together = ("puzzle", "guess")
@@ -154,7 +154,9 @@ class Team(models.Model):
     def unlocked_puzzles_with_solved(self):
         return self.unlocked_puzzles().annotate(
             correct_guess=Subquery(
-                Guess.objects.filter(team=self, puzzle=OuterRef("pk"), correct=True).values('guess')
+                Guess.objects.filter(
+                    team=self, puzzle=OuterRef("pk"), correct=True
+                ).values("guess")
             ),
         )
 
@@ -174,7 +176,9 @@ class Guess(models.Model):
     )  # Not a source of truth because users could move around teams, but maybe useful for auditing
     puzzle = models.ForeignKey(Puzzle, related_name="guesses", on_delete=models.CASCADE)
     correct = models.BooleanField()
+    response = models.CharField(max_length=500)
     time = models.DateTimeField(auto_now_add=True)
+    counts_as_guess = models.BooleanField()  # for partial confirmations...
 
     class Meta:
         constraints = [
