@@ -1,27 +1,27 @@
 {% extends "base.html" %}
 {% load markdown %}
 {% block nav %}
-» <a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a>
-» <a href="{% url 'view_puzzle' hunt.id hunt.slug puzzle.id puzzle.slug %}">{{ puzzle.name }}</a>
-» Log
+    » <a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a>
+    » <a href="{% url 'view_puzzle' hunt.id hunt.slug puzzle.id puzzle.slug %}">{{ puzzle.name }}</a>
+    » Log
 {% endblock %}
 {% block main %}
-<h1>Log: {{ puzzle.name }}</h1>
+    <h1>Log: {{ puzzle.name }}</h1>
 
-<table class="classic">
-	<tr>
-		<th>Team</th>
-		<th>Guess</th>
-		<th>Time</th>
-		<th>Correct?</th>
-	</tr>
-	{% for guess in guesses %}
-	<tr>
-		<td>{{ guess.team.name }}</td>
-		<td>{{ guess.guess }}</td>
-		<td>{{ guess.time }}</td>
-		<td>{{ guess.correct }}</td>
-	</tr>
-	{% endfor %}
-</table>
+    <table class="classic">
+        <tr>
+            <th>Team</th>
+            <th>Guess</th>
+            <th>Time</th>
+            <th>Correct?</th>
+        </tr>
+        {% for guess in guesses %}
+            <tr>
+                <td>{{ guess.team.name }}</td>
+                <td>{{ guess.guess }}</td>
+                <td>{{ guess.time }}</td>
+                <td>{{ guess.correct }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
