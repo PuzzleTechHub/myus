@@ -18,9 +18,10 @@ from .forms import (
     InviteMemberForm,
     PuzzleForm,
     RegisterForm,
-    TeamForm
+    TeamForm,
 )
 from .models import Hunt, Team, Puzzle, Guess, ExtraGuessGrant
+
 
 def index(request):
     # user = request.user
@@ -440,6 +441,7 @@ def my_team(request, hunt_id: int, slug: Optional[str] = None):
         },
     )
 
+
 class GuessResponseForm(forms.ModelForm):
     class Meta:
         model = GuessResponse
@@ -466,6 +468,7 @@ class PuzzleForm(forms.ModelForm):
 PuzzleFormSet = forms.inlineformset_factory(
     Puzzle, GuessResponse, form=GuessResponseForm, extra=1, can_delete=True
 )
+
 
 @redirect_from_hunt_id_to_hunt_id_and_slug
 @login_required
