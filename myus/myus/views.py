@@ -12,6 +12,8 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 
 import django.urls as urls
+import django.forms as forms
+
 from .forms import (
     GuessForm,
     HuntForm,
@@ -19,8 +21,9 @@ from .forms import (
     PuzzleForm,
     RegisterForm,
     TeamForm,
+    MarkdownTextarea,
 )
-from .models import Hunt, Team, Puzzle, Guess, ExtraGuessGrant
+from .models import Hunt, Team, Puzzle, Guess, ExtraGuessGrant, GuessResponse
 
 
 def index(request):
@@ -465,14 +468,12 @@ class PuzzleForm(forms.ModelForm):
         ]
 
 
-PuzzleFormSet = forms.inlineformset_factory(
-    Puzzle, GuessResponse, form=GuessResponseForm, extra=1, can_delete=True
-)
-
-
 @redirect_from_hunt_id_to_hunt_id_and_slug
 @login_required
 def new_puzzle(request, hunt_id: int, slug: Optional[str] = None):
+    PuzzleFormSet = forms.inlineformset_factory(
+        Puzzle, GuessResponse, form=GuessResponseForm, extra=1, can_delete=True
+    )
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
 
@@ -515,6 +516,9 @@ def edit_puzzle(
     hunt_slug: Optional[str] = None,
     puzzle_slug: Optional[str] = None,
 ):
+    PuzzleFormSet = forms.inlineformset_factory(
+        Puzzle, GuessResponse, form=GuessResponseForm, extra=1, can_delete=True
+    )
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
