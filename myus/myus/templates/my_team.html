@@ -1,83 +1,83 @@
 {% extends "base.html" %}
 {% block nav %}
-» <a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a>
-» My Team
+    » <a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a>
+    » My Team
 {% endblock %}
 {% load user_display %}
 {% block main %}
-<h1>Hunt: {{ hunt.name }}</h1>
-<a href="{% url 'leaderboard' hunt.id hunt.slug %}">leaderboard</a>
+    <h1>Hunt: {{ hunt.name }}</h1>
+    <a href="{% url 'leaderboard' hunt.id hunt.slug %}">leaderboard</a>
 
-{% if error %}
-Error: {{ error }}
-{% endif %}
+    {% if error %}
+        Error: {{ error }}
+    {% endif %}
 
-{% if is_organizer %}
-<p>You are an organizer of this hunt. <a href="{% url 'new_puzzle' hunt.id hunt.slug %}">add puzzle</a></p>
-{% elif team %}
-<p>You are on Team {{ team.name }}. Members:</p>
+    {% if is_organizer %}
+        <p>You are an organizer of this hunt. <a href="{% url 'new_puzzle' hunt.id hunt.slug %}">add puzzle</a></p>
+    {% elif team %}
+        <p>You are on Team {{ team.name }}. Members:</p>
 
-<ul>
-	{% for user in team.members.all %}
-		<li>{% user_display user %}</li>
-	{% endfor %}
-</ul>
+        <ul>
+            {% for user in team.members.all %}
+                <li>{% user_display user %}</li>
+            {% endfor %}
+        </ul>
 
-{% if team.invited_members.all %}
-<p>Invited:</p>
-<ul>
-	{% for user in team.invited_members.all %}
-		<li>{% user_display user %}</li>
-	{% endfor %}
-</ul>
-{% else %}
-<p>You don't have any outstanding invitations to people to join your team.</p>
-{% endif %}
+        {% if team.invited_members.all %}
+            <p>Invited:</p>
+            <ul>
+                {% for user in team.invited_members.all %}
+                    <li>{% user_display user %}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You don't have any outstanding invitations to people to join your team.</p>
+        {% endif %}
 
-<p>Invite another person to your team by entering their username:</p>
+        <p>Invite another person to your team by entering their username:</p>
 
-<form method="POST">
-	{% csrf_token %}
-	{{ invite_member_form.non_field_errors }}
+        <form method="POST">
+            {% csrf_token %}
+            {{ invite_member_form.non_field_errors }}
 
-	<table class="classic">
-	{{ invite_member_form.as_table }}
-	</table>
-	<input type="submit" name="invite_member" value="Submit">
-</form>
+            <table class="classic">
+                {{ invite_member_form.as_table }}
+            </table>
+            <input type="submit" name="invite_member" value="Submit">
+        </form>
 
-{% if team.invited_users.all %}
-<p>Invited users:</p>
-<ul>
-	{% for u in team.invited_users.all %}
-		<li>{% user_display user %}</li>
-	{% endfor %}
-</ul>
-{% endif %}
+        {% if team.invited_users.all %}
+            <p>Invited users:</p>
+            <ul>
+                {% for u in team.invited_users.all %}
+                    <li>{% user_display user %}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
-{% else %}
-<p>You are not in a team. Create one?</p>
-<form method="POST">
-	{% csrf_token %}
-	{{ create_team_form.non_field_errors }}
+    {% else %}
+        <p>You are not in a team. Create one?</p>
+        <form method="POST">
+            {% csrf_token %}
+            {{ create_team_form.non_field_errors }}
 
-	<table class="classic">
-	{{ create_team_form.as_table }}
-	</table>
-	<input type="submit" name="create_team" value="Submit">
-</form>
+            <table class="classic">
+                {{ create_team_form.as_table }}
+            </table>
+            <input type="submit" name="create_team" value="Submit">
+        </form>
 
-{% if inviting_teams %}
-{% for team in inviting_teams %}
-<form method="POST">
-	{% csrf_token %}
-	Accept invitation to {{ team.name }}: <button type="submit" name="accept_invite" value="{{ team.id }}">Accept</button>
-</form>
-{% endfor %}
-{% else %}
-You don't have any invitations.
-{% endif %}
+        {% if inviting_teams %}
+            {% for team in inviting_teams %}
+                <form method="POST">
+                    {% csrf_token %}
+                    Accept invitation to {{ team.name }}: <button type="submit" name="accept_invite" value="{{ team.id }}">Accept</button>
+                </form>
+            {% endfor %}
+        {% else %}
+            You don't have any invitations.
+        {% endif %}
 
-{% endif %}
+    {% endif %}
 
 {% endblock %}

@@ -1,20 +1,29 @@
 from functools import wraps
 from typing import Optional
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import Http404, JsonResponse
-from django.db.models import OuterRef, Exists, Sum, Subquery, Count, Max, Q
-from django.db.models.functions import Cast, Coalesce
-from django.template.loader import render_to_string
-
+from django import urls
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
+from django.db.models import OuterRef, Sum, Subquery, Count, Q
+from django.db.models.functions import Coalesce
+from django.http import Http404, JsonResponse
 from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
 
-import django.forms as forms
 import django.urls as urls
+import django.forms as forms
 
-from .models import Hunt, User, Team, Puzzle, Guess, ExtraGuessGrant
+from .forms import (
+    GuessForm,
+    HuntForm,
+    InviteMemberForm,
+    PuzzleForm,
+    RegisterForm,
+    TeamForm,
+    MarkdownTextarea,
+)
+from .models import Hunt, Team, Puzzle, Guess, ExtraGuessGrant, GuessResponse
 
 
 def index(request):
@@ -27,56 +36,6 @@ def index(request):
             "hunts": hunts,
         },
     )
-
-
-class MarkdownTextarea(forms.Textarea):
-    template_name = "widgets/markdown_textarea.html"
-
-
-# based on UserCreationForm from Django source
-class RegisterForm(forms.ModelForm):
-    """
-    A form that creates a user, with no privileges, from the given username and
-    password.
-    """
-
-    password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
-    password2 = forms.CharField(
-        label="Password confirmation",
-        widget=forms.PasswordInput,
-        help_text="Enter the same password as above, for verification.",
-    )
-    email = forms.EmailField(
-        label="Email address",
-        required=False,
-        help_text="Optional, but you'll get useful email notifications when we implement those.",
-    )
-    bio = forms.CharField(
-        widget=MarkdownTextarea,
-        required=False,
-        help_text="(optional) Tell us about yourself. What kinds of puzzle genres or subject matter do you like?",
-    )
-
-    class Meta:
-        model = User
-        fields = ("username", "email", "display_name", "discord_username", "bio")
-
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError(
-                "The two password fields didn't match.",
-                code="password_mismatch",
-            )
-        return password2
-
-    def save(self, commit=True):
-        user = super(RegisterForm, self).save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
-        return user
 
 
 def register(request):
@@ -92,22 +51,6 @@ def register(request):
         return render(request, "register.html", {"form": form})
 
 
-class HuntForm(forms.ModelForm):
-    description = forms.CharField(widget=MarkdownTextarea, required=False)
-
-    class Meta:
-        model = Hunt
-        fields = [
-            "name",
-            "slug",
-            "description",
-            "start_time",
-            "end_time",
-            "member_limit",
-            "guess_limit",
-        ]
-
-
 @login_required
 def new_hunt(request):
     if request.method == "POST":
@@ -118,7 +61,7 @@ def new_hunt(request):
             # needs save before we can do many-to-many stuff
             hunt.organizers.add(request.user)
 
-            return redirect(urls.reverse("view_hunt", args=[hunt.pk,hunt.slug]))
+            return redirect(urls.reverse("view_hunt", args=[hunt.pk, hunt.slug]))
     else:
         form = HuntForm()
 
@@ -143,10 +86,11 @@ def get_team(user, hunt):
 
 
 def redirect_from_hunt_id_to_hunt_id_and_slug(view_func):
-    """ Redirect from a URL with a hunt ID to a URL with a hunt ID and a slug
+    """Redirect from a URL with a hunt ID to a URL with a hunt ID and a slug
 
     Also redirect from a URL with a hunt ID and the wrong slug to the correct slug
     """
+
     @wraps(view_func)
     def wrapper(request, hunt_id: int, *args, slug: Optional[str] = None, **kwargs):
         hunt = get_object_or_404(Hunt, id=hunt_id)
@@ -161,20 +105,43 @@ def redirect_from_hunt_id_to_hunt_id_and_slug(view_func):
 
 
 def force_url_to_include_both_hunt_and_puzzle_slugs(view_func):
-    """ Redirect from a URL missing a hunt or puzzle slug to one that includes them
+    """Redirect from a URL missing a hunt or puzzle slug to one that includes them
 
     Also redirect from a URL where the ID doesn't match the slug to the correct URL
     """
+
     @wraps(view_func)
-    def wrapper(request, hunt_id: int, puzzle_id: int, *args, hunt_slug: Optional[str] = None, puzzle_slug: Optional[str] = None, **kwargs):
+    def wrapper(
+        request,
+        hunt_id: int,
+        puzzle_id: int,
+        *args,
+        hunt_slug: Optional[str] = None,
+        puzzle_slug: Optional[str] = None,
+        **kwargs
+    ):
         hunt = get_object_or_404(Hunt, id=hunt_id)
         puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
 
         if hunt.slug != hunt_slug or puzzle.slug != puzzle_slug:
             view_name = urls.resolve(request.path_info).url_name
-            return redirect(view_name, hunt_id=hunt.id, hunt_slug=hunt.slug, puzzle_id=puzzle.id, puzzle_slug=puzzle.slug)
+            return redirect(
+                view_name,
+                hunt_id=hunt.id,
+                hunt_slug=hunt.slug,
+                puzzle_id=puzzle.id,
+                puzzle_slug=puzzle.slug,
+            )
 
-        return view_func(request, *args, hunt_id=hunt_id, hunt_slug=hunt_slug, puzzle_id=puzzle_id, puzzle_slug=puzzle_slug, **kwargs)
+        return view_func(
+            request,
+            *args,
+            hunt_id=hunt_id,
+            hunt_slug=hunt_slug,
+            puzzle_id=puzzle_id,
+            puzzle_slug=puzzle_slug,
+            **kwargs
+        )
 
     return wrapper
 
@@ -256,16 +223,18 @@ def leaderboard(request, hunt_id: int, slug: Optional[str] = None):
     )
 
 
-class GuessForm(forms.Form):
-    guess = forms.CharField()
-
-
 def normalize_answer(answer):
     return "".join(c for c in answer if c.isalnum()).upper()
 
 
 @force_url_to_include_both_hunt_and_puzzle_slugs
-def view_puzzle(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[str] = None, puzzle_slug: Optional[str] = None):
+def view_puzzle(
+    request,
+    hunt_id: int,
+    puzzle_id: int,
+    hunt_slug: Optional[str] = None,
+    puzzle_slug: Optional[str] = None,
+):
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
@@ -290,7 +259,10 @@ def view_puzzle(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[str] 
                 pass
 
             guesses_remaining = (
-                guess_limit - Guess.objects.filter(puzzle=puzzle, team=team).count()
+                guess_limit
+                - Guess.objects.filter(
+                    puzzle=puzzle, team=team, counts_as_guess=True
+                ).count()
             )
             guesses_at_limit = guesses_remaining <= 0
         else:
@@ -315,11 +287,20 @@ def view_puzzle(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[str] 
             ).exists():
                 guess_form.add_error("guess", "You have already guessed that answer!")
             else:
+                guess_responses = puzzle.guess_responses.all()
+                response = ""
+                counts_as_guess = True
+                for gr in guess_responses:
+                    if guess_text == normalize_answer(gr.guess):
+                        response = gr.response
+                        counts_as_guess = False
                 guess = Guess(
                     guess=guess_text,
                     team=team,
                     user=user,
                     puzzle=puzzle,
+                    response=response,
+                    counts_as_guess=counts_as_guess,
                     correct=(guess_text == normalize_answer(puzzle.answer)),
                 )
                 guess.save()
@@ -350,7 +331,13 @@ def view_puzzle(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[str] 
 
 
 @force_url_to_include_both_hunt_and_puzzle_slugs
-def view_puzzle_log(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[str] = None, puzzle_slug: Optional[str] = None):
+def view_puzzle_log(
+    request,
+    hunt_id: int,
+    puzzle_id: int,
+    hunt_slug: Optional[str] = None,
+    puzzle_slug: Optional[str] = None,
+):
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
@@ -369,28 +356,6 @@ def view_puzzle_log(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[s
             "guesses": Guess.objects.filter(puzzle=puzzle).order_by("time"),
         },
     )
-
-
-class TeamForm(forms.ModelForm):
-    class Meta:
-        model = Team
-        fields = ["name"]
-
-
-class InviteMemberForm(forms.Form):
-    username = forms.CharField()
-
-    def clean(self):
-        cleaned_data = super().clean()
-        username = cleaned_data.get("username")
-
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            raise forms.ValidationError("No such user!")
-
-        cleaned_data["user"] = user
-        return cleaned_data
 
 
 @login_required
@@ -480,6 +445,12 @@ def my_team(request, hunt_id: int, slug: Optional[str] = None):
     )
 
 
+class GuessResponseForm(forms.ModelForm):
+    class Meta:
+        model = GuessResponse
+        fields = ["guess", "response"]
+
+
 class PuzzleForm(forms.ModelForm):
     content = forms.CharField(widget=MarkdownTextarea, required=False)
 
@@ -500,6 +471,9 @@ class PuzzleForm(forms.ModelForm):
 @redirect_from_hunt_id_to_hunt_id_and_slug
 @login_required
 def new_puzzle(request, hunt_id: int, slug: Optional[str] = None):
+    PuzzleFormSet = forms.inlineformset_factory(
+        Puzzle, GuessResponse, form=GuessResponseForm, extra=1, can_delete=True
+    )
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
 
@@ -508,14 +482,19 @@ def new_puzzle(request, hunt_id: int, slug: Optional[str] = None):
 
     if request.method == "POST":
         form = PuzzleForm(request.POST)
-        if form.is_valid():
+        formset = PuzzleFormSet(request.POST)
+        if form.is_valid() and formset.is_valid():
             puzzle = form.save(commit=False)
             puzzle.hunt = hunt
             puzzle.save()
 
+            formset.instance = puzzle
+            formset.save()
+
             return redirect(urls.reverse("view_puzzle", args=[hunt.id, puzzle.id]))
     else:
         form = PuzzleForm()
+        formset = PuzzleFormSet()
 
     return render(
         request,
@@ -523,28 +502,42 @@ def new_puzzle(request, hunt_id: int, slug: Optional[str] = None):
         {
             "hunt": hunt,
             "form": form,
+            "formset": formset,
         },
     )
 
 
 @force_url_to_include_both_hunt_and_puzzle_slugs
 @login_required
-def edit_puzzle(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[str] = None, puzzle_slug: Optional[str] = None):
+def edit_puzzle(
+    request,
+    hunt_id: int,
+    puzzle_id: int,
+    hunt_slug: Optional[str] = None,
+    puzzle_slug: Optional[str] = None,
+):
+    PuzzleFormSet = forms.inlineformset_factory(
+        Puzzle, GuessResponse, form=GuessResponseForm, extra=1, can_delete=True
+    )
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
-
     if not hunt.organizers.filter(id=user.id).exists():
         return HttpResponse(status=403)
 
     if request.method == "POST":
         form = PuzzleForm(request.POST, instance=puzzle)
-        if form.is_valid():
+        formset = PuzzleFormSet(request.POST, instance=puzzle)
+        if form.is_valid() and formset.is_valid():
             puzzle = form.save()
-            return redirect(urls.reverse("view_puzzle", args=[hunt.id, puzzle.id]))
+            formset = formset.save()
+            if request.POST.get("submit", "") == "Submit":
+                return redirect(urls.reverse("view_puzzle", args=[hunt.id, puzzle.id]))
+            else:
+                return redirect(urls.reverse("edit_puzzle", args=[hunt.id, puzzle.id]))
     else:
         form = PuzzleForm(instance=puzzle)
-
+        formset = PuzzleFormSet(instance=puzzle)
     return render(
         request,
         "edit_puzzle.html",
@@ -552,6 +545,7 @@ def edit_puzzle(request, hunt_id: int, puzzle_id: int, hunt_slug: Optional[str] 
             "hunt": hunt,
             "puzzle": puzzle,
             "form": form,
+            "formset": formset,
         },
     )
 

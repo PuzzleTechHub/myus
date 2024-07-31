@@ -1,25 +1,25 @@
 {% extends "base.html" %}
 {% block main %}
-<h1>welcome to myus!</h1>
-<p>This is a site where you can <b>run puzzlehunts, with teams, answer checking, puzzle unlocking</b> and stuff! <br><br>
+    <h1>welcome to myus!</h1>
+    <p>This is a site where you can <b>run puzzlehunts, with teams, answer checking, puzzle unlocking</b> and stuff! <br><br>
 
-Please note that we're continuously developing Myus, and there may be some bugs/potential data loss. We're still working out <a href="https://github.com/PuzzleTechHub/myus/issues">many things</a>, including a backup plan. You should always have a local backup of all your puzzles.<br><br>
+        Please note that we're continuously developing Myus, and there may be some bugs/potential data loss. We're still working out <a href="https://github.com/PuzzleTechHub/myus/issues">many things</a>, including a backup plan. You should always have a local backup of all your puzzles.<br><br>
 
-Any other bugs or feature requests? Find us at <a href="https://github.com/PuzzleTechHub/myus">our Github</a> or at <a href="https://discord.gg/kgTK5eD7XY">'Puzzle Tech Hub' Discord</a>.<br>
-</p>
-<h2>Hunts</h2>
-{% if hunts %}
-<ul>
-	{% for hunt in hunts %}
-	<li><a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a> by
-		{% for organizer in hunt.organizers.all %}
-			{{ organizer.username }}
-	 	{% endfor %}
-	</li>
-	{% endfor %}
-</ul>
-{% else %}
-<p>none yet</p>
-{% endif %}
-<p><a href="{% url 'new_hunt' %}">Create a new hunt</a></p>
+        Any other bugs or feature requests? Find us at <a href="https://github.com/PuzzleTechHub/myus">our Github</a> or at <a href="https://discord.gg/kgTK5eD7XY">'Puzzle Tech Hub' Discord</a>.<br>
+    </p>
+    <h2>Hunts</h2>
+    {% if hunts %}
+        <ul>
+            {% for hunt in hunts %}
+                <li><a href="{% url 'view_hunt' hunt.id hunt.slug %}">{{ hunt.name }}</a> by
+                    {% for organizer in hunt.organizers.all %}
+                        {{ organizer.username }}
+                    {% endfor %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>none yet</p>
+    {% endif %}
+    <p><a href="{% url 'new_hunt' %}">Create a new hunt</a></p>
 {% endblock %}

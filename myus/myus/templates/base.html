@@ -1,91 +1,91 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="{% static 'css/general.css' %}">
-		<link rel="shortcut icon" href="{% static 'favicon.ico' %}"/>
-		<title>{% block title %}myus{% endblock %}</title>
-	</head>
-	<body>
-		<nav class="nav-main">
-			<div class="nav-inner">
-			<div class="nav-breadcrumbs">
-			<a href="{% url 'index' %}">myus</a>
-			{% block nav %}{% endblock %}
-			</div>
-			<div class="nav-user">
-			{% if request.user.is_authenticated %}
-			Logged in as {{ request.user.username }}
-			<form method="post" action="{% url 'logout' %}">
-				{% csrf_token %}
-				<button type="submit">logout</button>
-			</form>
-			{% else %}
-			<a href="{% url 'login' %}">Login</a> or
-			<a href="{% url 'register' %}">Register</a>
-			{% endif %}
-			</div>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{% static 'css/general.css' %}">
+        <link rel="shortcut icon" href="{% static 'favicon.ico' %}"/>
+        <title>{% block title %}myus{% endblock %}</title>
+    </head>
+    <body>
+        <nav class="nav-main">
+            <div class="nav-inner">
+                <div class="nav-breadcrumbs">
+                    <a href="{% url 'index' %}">myus</a>
+                    {% block nav %}{% endblock %}
+                </div>
+                <div class="nav-user">
+                    {% if request.user.is_authenticated %}
+                        Logged in as {{ request.user.username }}
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit">logout</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}">Login</a> or
+                        <a href="{% url 'register' %}">Register</a>
+                    {% endif %}
+                </div>
 			<!-- <button id="menu-button" type="button" class="menu-button">&#9776;</button> -->
-			</div>
-		</nav>
-		<main>
-			{% block main %}{% endblock %}
-		</main>
-		<script type="text/javascript">
-			document.querySelectorAll(".toggle-show").forEach((node) => {
-				const target = document.getElementById(node.dataset.target);
-				node.addEventListener('click', () => {
-					if (target.classList.contains('hidden')) {
-						target.classList.remove('hidden');
-						node.dataset.reshow = node.innerText;
-						node.innerText = node.dataset.rehide;
-					} else {
-						target.classList.add('hidden');
-						node.innerText = node.dataset.reshow;
-					}
-				});
-			});
+            </div>
+        </nav>
+        <main>
+            {% block main %}{% endblock %}
+        </main>
+        <script type="text/javascript">
+            document.querySelectorAll(".toggle-show").forEach((node) => {
+                const target = document.getElementById(node.dataset.target);
+                node.addEventListener('click', () => {
+                    if (target.classList.contains('hidden')) {
+                        target.classList.remove('hidden');
+                        node.dataset.reshow = node.innerText;
+                        node.innerText = node.dataset.rehide;
+                    } else {
+                        target.classList.add('hidden');
+                        node.innerText = node.dataset.reshow;
+                    }
+                });
+            });
 
-			document.querySelectorAll('.markdown-preview-toggle').forEach((node) => {
-				const textarea = node.parentNode.nextSibling;
-				const preview = textarea.nextSibling;
-				console.log(textarea);
-				console.log(preview);
+            document.querySelectorAll('.markdown-preview-toggle').forEach((node) => {
+                const textarea = node.parentNode.nextSibling;
+                const preview = textarea.nextSibling;
+                console.log(textarea);
+                console.log(preview);
 
-				node.addEventListener('click', () => {
-					if (preview.classList.contains('hidden')) {
-						preview.classList.remove('hidden');
-						textarea.classList.add('hidden');
+                node.addEventListener('click', () => {
+                    if (preview.classList.contains('hidden')) {
+                        preview.classList.remove('hidden');
+                        textarea.classList.add('hidden');
 
-						preview.textContent = "Loading...";
+                        preview.textContent = "Loading...";
 
-						fetch("{% url 'preview_markdown' %}", {
-							method: 'POST',
-							body: textarea.value,
-						}).then((response) => response.json()).then((json) => {
-							console.log(json);
-							if (json.success) {
-								preview.innerHTML = json.output;
-							} else {
-								preview.textContent = "Error: " + json.error;
-							}
-						}).catch((error) => {
-							preview.textContent = "Error: " + error;
-						});
-					} else {
-						textarea.classList.remove('hidden');
-						preview.classList.add('hidden');
-					}
-				});
-			});
+                        fetch("{% url 'preview_markdown' %}", {
+                            method: 'POST',
+                            body: textarea.value,
+                        }).then((response) => response.json()).then((json) => {
+                            console.log(json);
+                            if (json.success) {
+                                preview.innerHTML = json.output;
+                            } else {
+                                preview.textContent = "Error: " + json.error;
+                            }
+                        }).catch((error) => {
+                            preview.textContent = "Error: " + error;
+                        });
+                    } else {
+                        textarea.classList.remove('hidden');
+                        preview.classList.add('hidden');
+                    }
+                });
+            });
 
-			document.querySelectorAll(".timestamp").forEach((node) => {
+            document.querySelectorAll(".timestamp").forEach((node) => {
 				// thanks, canada
-				node.textContent = new Date(Number(node.dataset.timestamp) * 1000).toLocaleString('en-CA');
-				node.setAttribute('title', 'Automatically converted to your time zone');
-			});
-		</script>
-	</body>
+                node.textContent = new Date(Number(node.dataset.timestamp) * 1000).toLocaleString('en-CA');
+                node.setAttribute('title', 'Automatically converted to your time zone');
+            });
+        </script>
+    </body>
 </html>
