@@ -8,4 +8,4 @@ markdown==3.6
 pre-commit==3.7.1
 psycopg2-binary==2.9.9
 python-dotenv==1.0.1
-whitenoise==6.6.0
+whitenoise==6.7.0
