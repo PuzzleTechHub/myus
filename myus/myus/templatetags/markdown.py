@@ -3,6 +3,8 @@ from django.utils.safestring import mark_safe
 from markdown import markdown as convert_markdown
 from bleach import Cleaner
 from bleach.linkifier import LinkifyFilter
+from django.utils.html import escape
+from django.template.loader import render_to_string
 
 register = template.Library()
 
@@ -44,3 +46,19 @@ cleaner = Cleaner(tags=SAFE_TAGS, filters=[LinkifyFilter])
 @register.filter
 def markdown(text):
     return mark_safe(cleaner.clean(convert_markdown(text, extensions=["extra"])))
+
+
+@register.filter
+def raw_markdown(text):
+    return convert_markdown(text, extensions=["extra"])
+
+
+@register.filter
+def markdown_srcdoc(text):
+    puzzle_iframe = render_to_string(
+        "view_puzzle_iframe.html",
+        {
+            "puzzle": text,
+        },
+    )
+    return escape(puzzle_iframe)
