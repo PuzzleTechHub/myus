@@ -1,0 +1,16 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{% static 'css/general.css' %}">
+        <link rel="shortcut icon" href="{% static 'favicon.ico' %}"/>
+        <title>{% block title %}myus{% endblock %}</title>
+    </head>
+    <body>
+        <base target="_parent">
+        {% load markdown %}
+        {{ puzzle | raw_markdown | safe}}
+    </body>
+</html>

@@ -82,3 +82,11 @@ samp {
 h1 {
     margin-top: 0;
 }
+
+#puzzleframe {
+    background-color: transparent;
+    border: 0px none transparent;
+    padding: 0px;
+    overflow: hidden;
+    width: 100%;
+}

@@ -1,1 +1,6 @@
-{% load markdown %}{{ input|markdown }}
+{% load markdown %}
+
+<iframe id="puzzleframe"
+        sandbox="allow-same-origin allow-top-navigation"
+        srcdoc="{{input | markdown_srcdoc }}"
+        onload="resizePuzzle()"></iframe>
