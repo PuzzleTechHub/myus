@@ -1,0 +1,46 @@
+# fly.toml app configuration file generated for myus-prod on 2024-08-02T03:05:27+05:30
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'myus-prod'
+primary_region = 'ams'
+console_command = 'myus/manage.py shell'
+
+[build]
+
+[deploy]
+  release_command = 'python myus/manage.py migrate --noinput'
+
+[env]
+  PORT = '8000'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+[[restart]]
+  policy = "never"
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[[statics]]
+  guest_path = '/myus/static'
+  url_prefix = '/static/'
+
+#  app = 'bot-be-named-billowing-fog-6159'
+#  primary_region = 'ams'
+#
+#  [[services]]
+#    internal_port = 8080
+#    protocol = "tcp"
+#    auto_start_machines = true
+#    auto_stop_machines = false  # prevent automatic suspension
+#    min_machines_running = 1  # keep a machine running at all times
