@@ -69,6 +69,11 @@ class Puzzle(models.Model):
         help_text="The puzzle body. For most puzzles, we suggest just providing an external URL; however, you can put short text-only puzzles here, or include a small amount of flavortext or explanatory text with a URL.",
     )
     answer = models.CharField(max_length=500)
+    answer_response = models.CharField(
+        max_length=500,
+        default="",
+        help_text='Response to a correct answer. Default is "You have solved this puzzle!". Basic html and images allowed.',
+    )
     points = models.IntegerField(
         default=1,
         help_text="How many points solving this puzzle earns.",
