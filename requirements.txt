@@ -1,9 +1,9 @@
-black==24.4.2
+black==24.8.0
 bleach==6.1.0
 dj-database-url==2.2.0
 dj-static==0.0.6
-django==5.0.7
-gunicorn==22.0.0
+django==5.1.1
+gunicorn==23.0.0
 markdown==3.7
 pre-commit==3.8.0
 psycopg2-binary==2.9.9
