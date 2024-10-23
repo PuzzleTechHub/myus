@@ -16,7 +16,11 @@
             <p>You aren't in a team signed up for this hunt! <a href="{% url 'my_team' puzzle.hunt.id puzzle.hunt.slug %}">Create or join</a> a team to try solving the puzzle.</p>
         {% else %}
             {% if solved %}
-                <p>You have solved this puzzle!</p>
+                {% if puzzle.answer_response == "" %}
+                    <p>You have solved this puzzle!</p>
+                {% else %}
+                    {{ puzzle.answer_response | clean}}
+                {% endif %}
             {% elif guesses_at_limit %}
                 <p>You have no more guesses left!</p>
             {% else %}

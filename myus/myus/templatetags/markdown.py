@@ -40,8 +40,18 @@ SAFE_TAGS = [
     "img",
 ]
 
+SAFE_ATTRS = {
+    "a": ["href", "title"],
+    "img": ["src", "style", "width", "height", "alt"],
+}
+
 # LinkifyFilter converts raw URLs in text into links
-cleaner = Cleaner(tags=SAFE_TAGS, filters=[LinkifyFilter])
+cleaner = Cleaner(tags=SAFE_TAGS, attributes=SAFE_ATTRS, filters=[LinkifyFilter])
+
+
+@register.filter
+def clean(text):
+    return mark_safe(cleaner.clean(text))
 
 
 @register.filter
