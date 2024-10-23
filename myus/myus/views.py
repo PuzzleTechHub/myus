@@ -461,6 +461,7 @@ class PuzzleForm(forms.ModelForm):
             "slug",
             "content",
             "answer",
+            "answer_response",
             "points",
             "order",
             "progress_points",
