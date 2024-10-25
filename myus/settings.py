@@ -29,7 +29,11 @@ DEBUG = False
 
 host_url = os.getenv("HOST_URL")
 ALLOWED_HOSTS = [host_url]
-CSRF_TRUSTED_ORIGINS = ["https://" + host_url, os.getenv("CSRF_TRUSTED_EXTRA")]
+
+if os.getenv("CSRF_TRUSTED_EXTRA"):
+    CSRF_TRUSTED_ORIGINS = ["https://" + host_url, os.getenv("CSRF_TRUSTED_EXTRA")]
+else:
+    CSRF_TRUSTED_ORIGINS = ["https://" + host_url]
 
 # Application definition
 
