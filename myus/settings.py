@@ -28,23 +28,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEBUG = False
 
 host_url = os.getenv("HOST_URL")
-if host_url:
-    host_url_list = host_url.split(",")
-else:
-    host_url_list = []
+ALLOWED_HOSTS = host_url
 
-ALLOWED_HOSTS = host_url_list
-
-if os.getenv("CSRF_TRUSTED"):
-    csrf_url = os.getenv("CSRF_TRUSTED")
-    if csrf_url:
-        csrf_url_list = csrf_url.split(",")
-    else:
-        csrf_url_list = host_url_list
-else:
-    csrf_url_list = host_url_list
-CSRF_TRUSTED_ORIGINS = csrf_url_list
-
+csrf_url = os.getenv("CSRF_TRUSTED")
+CSRF_TRUSTED_ORIGINS = csrf_url
 # Application definition
 
 INSTALLED_APPS = [
