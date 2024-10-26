@@ -32,14 +32,12 @@ ALLOWED_HOSTS = [host_url, "www." + host_url]
 
 if os.getenv("CSRF_TRUSTED_EXTRA"):
     CSRF_TRUSTED_ORIGINS = [
-        "https://" + host_url,
-        "https://www." + host_url,
+        host_url,
         os.getenv("CSRF_TRUSTED_EXTRA"),
     ]
 else:
     CSRF_TRUSTED_ORIGINS = [
-        "https://" + host_url,
-        "https://www." + host_url,
+        host_url,
     ]
 
 # Application definition
