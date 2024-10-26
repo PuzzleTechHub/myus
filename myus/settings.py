@@ -30,10 +30,18 @@ DEBUG = False
 host_url = os.getenv("HOST_URL")
 ALLOWED_HOSTS = [host_url]
 
-csrf_url = os.getenv("CSRF_TRUSTED")
-CSRF_TRUSTED_ORIGINS = [csrf_url]
-# Application definition
+if os.getenv("CSRF_TRUSTED_EXTRA"):
+    CSRF_TRUSTED_ORIGINS = ["https://" + host_url, os.getenv("CSRF_TRUSTED_EXTRA")]
+    CSRF_TRUSTED_ORIGINS = [
+        "https://" + host_url,
+        "https://www." + host_url,
+        os.getenv("CSRF_TRUSTED_EXTRA"),
+    ]
+else:
+    CSRF_TRUSTED_ORIGINS = ["https://" + host_url]
+    CSRF_TRUSTED_ORIGINS = ["https://" + host_url, "https://www." + host_url]
 
+# Application definition
 INSTALLED_APPS = [
     "myus.apps.myusConfig",
     "django.contrib.admin",
