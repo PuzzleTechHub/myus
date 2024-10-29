@@ -11,7 +11,9 @@
         </p>
 
         {% if is_organizer %}
-            <p>You are an organizer of this hunt. <a href="{% url 'new_puzzle' hunt.id hunt.slug %}">add puzzle</a></p>
+            <p>You are an organizer of this hunt:
+                <ul><li><a href="{% url 'new_puzzle' hunt.id hunt.slug %}">add puzzle</a></li>
+                    <li><a href="{% url 'edit_hunt' hunt.id hunt.slug %}">edit hunt settings</a></li></ul> </p>
         {% elif team %}
             <p>You are  <a href="{% url 'my_team' hunt.id hunt.slug %}">on Team {{ team.name }}</a>.</p>
         {% else %}

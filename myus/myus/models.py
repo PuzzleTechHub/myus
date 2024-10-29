@@ -29,12 +29,12 @@ class Hunt(models.Model):
     start_time = models.DateTimeField(
         blank=True,
         null=True,
-        help_text="Start time of the hunt. If empty, the hunt will never begin. For indefinitely open hunts, you can just set it to any time in the past.",
+        help_text="(Not implemented) Start time of the hunt. If empty, the hunt will never begin. For indefinitely open hunts, you can just set it to any time in the past.",
     )
     end_time = models.DateTimeField(
         blank=True,
         null=True,
-        help_text="End date of the hunt. If empty, the hunt will always be open.",
+        help_text="(Not implemented) End date of the hunt. If empty, the hunt will always be open.",
     )
     organizers = models.ManyToManyField(User, related_name="organizing_hunts")
     invited_organizers = models.ManyToManyField(
@@ -47,7 +47,7 @@ class Hunt(models.Model):
     )
     member_limit = models.IntegerField(
         default=0,
-        help_text="The maximum number of members allowed per team; 0 means unlimited",
+        help_text="(Not implemented) The maximum number of members allowed per team; 0 means unlimited",
         validators=[MinValueValidator(0)],
     )
     guess_limit = models.IntegerField(

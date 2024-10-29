@@ -68,7 +68,25 @@ class RegisterForm(forms.ModelForm):
         return user
 
 
-class HuntForm(forms.ModelForm):
+class NewHuntForm(forms.ModelForm):
+    description = forms.CharField(widget=MarkdownTextarea, required=False)
+    start_time = DateTimeLocalField(required=False, help_text="Date/time must be UTC")
+    end_time = DateTimeLocalField(required=False, help_text="Date/time must be UTC")
+
+    class Meta:
+        model = Hunt
+        fields = [
+            "name",
+            "slug",
+            "description",
+            "start_time",
+            "end_time",
+            "member_limit",
+            "guess_limit",
+        ]
+
+
+class EditHuntForm(forms.ModelForm):
     description = forms.CharField(widget=MarkdownTextarea, required=False)
     start_time = DateTimeLocalField(required=False, help_text="Date/time must be UTC")
     end_time = DateTimeLocalField(required=False, help_text="Date/time must be UTC")

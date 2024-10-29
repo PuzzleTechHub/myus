@@ -10,13 +10,15 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import PermissionDenied
 
 import django.urls as urls
 import django.forms as forms
 
 from .forms import (
     GuessForm,
-    HuntForm,
+    NewHuntForm,
+    EditHuntForm,
     InviteMemberForm,
     PuzzleForm,
     RegisterForm,
@@ -54,7 +56,7 @@ def register(request):
 @login_required
 def new_hunt(request):
     if request.method == "POST":
-        form = HuntForm(request.POST)
+        form = NewHuntForm(request.POST)
         if form.is_valid():
             hunt = form.save()
 
@@ -63,7 +65,7 @@ def new_hunt(request):
 
             return redirect(urls.reverse("view_hunt", args=[hunt.pk, hunt.slug]))
     else:
-        form = HuntForm()
+        form = NewHuntForm()
 
     return render(
         request,
@@ -547,6 +549,35 @@ def edit_puzzle(
             "puzzle": puzzle,
             "form": form,
             "formset": formset,
+        },
+    )
+
+
+@login_required
+@redirect_from_hunt_id_to_hunt_id_and_slug
+def edit_hunt(
+    request,
+    hunt_id: int,
+    slug: Optional[str] = None,
+):
+    user = request.user
+    hunt = get_object_or_404(Hunt, id=hunt_id)
+    if not hunt.organizers.filter(id=user.id).exists():
+        raise PermissionDenied
+
+    if request.method == "POST":
+        form = EditHuntForm(request.POST)
+        if form.is_valid():
+            hunt = form.save()
+            return redirect(urls.reverse("view_hunt", args=[hunt.pk, hunt.slug]))
+    else:
+        form = EditHuntForm(instance=hunt)
+
+    return render(
+        request,
+        "edit_hunt.html",
+        {
+            "form": form,
         },
     )
 
