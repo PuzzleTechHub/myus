@@ -3,7 +3,7 @@ from typing import Optional
 
 from django import urls
 from django.contrib.auth.decorators import login_required
-from django.db.models import OuterRef, Sum, Subquery, Count, Q, F
+from django.db.models import OuterRef, Sum, Subquery, Count, Q, F, DurationField
 from django.db.models.functions import Coalesce, Greatest
 from django.http import Http404, JsonResponse
 from django.http import HttpResponse
@@ -211,7 +211,9 @@ def leaderboard(request, hunt_id: int, slug: Optional[str] = None):
         ),
         created_or_start=Greatest(F("creation_time"), hunt.start_time),
         solve_time=Greatest(
-            Coalesce(F("last_solve"), F("created_or_start")) - F("created_or_start"), 0
+            Coalesce(F("last_solve"), F("created_or_start")) - F("created_or_start"),
+            0,
+            output_field=DurationField(),
         ),
     )
 
