@@ -28,18 +28,25 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEBUG = False
 
 host_url = os.getenv("HOST_URL")
-ALLOWED_HOSTS = [host_url]
+extra_hosts_url = os.getenv("HOSTS_URL_EXTRA")
 
-if os.getenv("CSRF_TRUSTED_EXTRA"):
-    CSRF_TRUSTED_ORIGINS = ["https://" + host_url, os.getenv("CSRF_TRUSTED_EXTRA")]
+if extra_hosts_url:
     CSRF_TRUSTED_ORIGINS = [
         "https://" + host_url,
         "https://www." + host_url,
-        os.getenv("CSRF_TRUSTED_EXTRA"),
+        "https://" + extra_hosts_url,
+    ]
+    ALLOWED_HOSTS = [
+        host_url,
+        "www." + host_url,
+        extra_hosts_url,
     ]
 else:
-    CSRF_TRUSTED_ORIGINS = ["https://" + host_url]
     CSRF_TRUSTED_ORIGINS = ["https://" + host_url, "https://www." + host_url]
+    ALLOWED_HOSTS = [
+        host_url,
+        "www." + host_url,
+    ]
 
 # Application definition
 INSTALLED_APPS = [
