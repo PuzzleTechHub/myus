@@ -81,6 +81,7 @@ class Puzzle(models.Model):
     answer_response = models.CharField(
         max_length=500,
         default="",
+        blank=True,
         help_text='Response to a correct answer. Default is "You have solved this puzzle!". Basic html and images allowed.',
     )
     points = models.IntegerField(
