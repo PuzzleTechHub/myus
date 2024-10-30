@@ -33,7 +33,7 @@
                 <tr>
                     <td><a href="{% url 'view_puzzle' hunt.id hunt.slug puzzle.id puzzle.slug %}">{{ puzzle.name }}</a></td>
                     <td>{% if puzzle.correct_guess %}✅{% endif %}</td>
-                    <td>{% if puzzle.correct_guess %}<samp>{{ puzzle.correct_guess }}</samp>{% endif %}</td>
+                    <td>{% if puzzle.correct_guess %}<samp>{{ puzzle.answer | upper }}</samp>{% endif %}</td>
                     <td>{{ puzzle.solve_count }}</td>
                     <td>{{ puzzle.guess_count }}</td>
                 </tr>
