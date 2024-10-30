@@ -566,7 +566,7 @@ def edit_hunt(
         raise PermissionDenied
 
     if request.method == "POST":
-        form = EditHuntForm(request.POST)
+        form = EditHuntForm(request.POST, instance=hunt)
         if form.is_valid():
             hunt = form.save()
             return redirect(urls.reverse("view_hunt", args=[hunt.pk, hunt.slug]))
