@@ -11,6 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import PermissionDenied
+from datetime import timedelta
 
 import django.urls as urls
 import django.forms as forms
@@ -212,7 +213,7 @@ def leaderboard(request, hunt_id: int, slug: Optional[str] = None):
         created_or_start=Greatest(F("creation_time"), hunt.start_time),
         solve_time=Greatest(
             Coalesce(F("last_solve"), F("created_or_start")) - F("created_or_start"),
-            0,
+            timedelta(seconds=0),
             output_field=DurationField(),
         ),
     )
