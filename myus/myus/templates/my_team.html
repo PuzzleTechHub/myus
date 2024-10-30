@@ -6,7 +6,9 @@
 {% load user_display %}
 {% block main %}
     <h1>Hunt: {{ hunt.name }}</h1>
-    <a href="{% url 'leaderboard' hunt.id hunt.slug %}">leaderboard</a>
+    {% if hunt.leaderboard_style != "HID" %}
+        <a href="{% url 'leaderboard' hunt.id hunt.slug %}">leaderboard</a>
+    {% endif %}
 
     {% if error %}
         Error: {{ error }}

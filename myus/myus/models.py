@@ -55,6 +55,15 @@ class Hunt(models.Model):
         help_text="The default number of guesses teams get on each puzzle; 0 means unlimited",
         validators=[MinValueValidator(0)],
     )
+
+    class LeaderboardStyle(models.TextChoices):
+        DEFAULT = "DEF", "Default (ordered by score, solve count, and last solve time)"
+        HIDDEN = "HID", "Hidden (not displayed publicly)"
+        SPEEDRUN = "SPD", "Speedrun (ordered by score and time to solve)"
+
+    leaderboard_style = models.CharField(
+        max_length=3, choices=LeaderboardStyle, default=LeaderboardStyle.DEFAULT
+    )
     slug = models.SlugField(help_text="A short, unique identifier for the hunt.")
 
     def public_puzzles(self):

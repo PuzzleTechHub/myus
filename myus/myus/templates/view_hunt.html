@@ -6,9 +6,11 @@
 {% block main %}
     <h1>Hunt: {{ hunt.name }}</h1>
     <nav class="nav-hunt">
-        <p>
-            <a href="{% url 'leaderboard' hunt.id hunt.slug %}">Leaderboard</a>
-        </p>
+        {% if hunt.leaderboard_style != "HID" or is_organizer %}
+            <p>
+                <a href="{% url 'leaderboard' hunt.id hunt.slug %}">Leaderboard</a>
+            </p>
+        {% endif %}
 
         {% if is_organizer %}
             <p>You are an organizer of this hunt:

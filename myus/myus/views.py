@@ -3,8 +3,8 @@ from typing import Optional
 
 from django import urls
 from django.contrib.auth.decorators import login_required
-from django.db.models import OuterRef, Sum, Subquery, Count, Q
-from django.db.models.functions import Coalesce
+from django.db.models import OuterRef, Sum, Subquery, Count, Q, F
+from django.db.models.functions import Coalesce, Greatest
 from django.http import Http404, JsonResponse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -209,13 +209,22 @@ def leaderboard(request, hunt_id: int, slug: Optional[str] = None):
             .order_by("-time")[:1]
             .values("time")
         ),
-    ).order_by("-score", "-solve_count", "last_solve")
+        created_or_start=Greatest(F("creation_time"), hunt.start_time),
+        solve_time=Coalesce(F("last_solve"), F("created_or_start"))
+        - F("created_or_start"),
+    )
 
-    print(teams.query)
+    #   print(teams.query)
+    if hunt.leaderboard_style == Hunt.LeaderboardStyle.SPEEDRUN:
+        teams = teams.order_by("-score", "-solve_count", "solve_time")
+        template = "leaderboard_SPD.html"
+    else:
+        teams = teams.order_by("-score", "-solve_count", "last_solve")
+        template = "leaderboard.html"
 
     return render(
         request,
-        "leaderboard.html",
+        template,
         {
             "hunt": hunt,
             "team": team,

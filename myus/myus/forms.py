@@ -83,6 +83,7 @@ class NewHuntForm(forms.ModelForm):
             "end_time",
             "member_limit",
             "guess_limit",
+            "leaderboard_style",
         ]
 
 
@@ -101,6 +102,7 @@ class EditHuntForm(forms.ModelForm):
             "end_time",
             "member_limit",
             "guess_limit",
+            "leaderboard_style",
         ]
 
 
