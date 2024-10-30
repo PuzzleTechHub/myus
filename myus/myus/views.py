@@ -210,13 +210,14 @@ def leaderboard(request, hunt_id: int, slug: Optional[str] = None):
             .values("time")
         ),
         created_or_start=Greatest(F("creation_time"), hunt.start_time),
-        solve_time=Coalesce(F("last_solve"), F("created_or_start"))
-        - F("created_or_start"),
+        solve_time=Greatest(
+            Coalesce(F("last_solve"), F("created_or_start")) - F("created_or_start"), 0
+        ),
     )
 
     #   print(teams.query)
     if hunt.leaderboard_style == Hunt.LeaderboardStyle.SPEEDRUN:
-        teams = teams.order_by("-score", "-solve_count", "solve_time")
+        teams = teams.order_by("-score", "-solve_count", "solve_time", "last_solve")
         template = "leaderboard_SPD.html"
     else:
         teams = teams.order_by("-score", "-solve_count", "last_solve")
