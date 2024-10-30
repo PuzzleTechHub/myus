@@ -59,7 +59,7 @@
                         <tr>
                             <td>
                                 {% if guess.correct %}
-                                    <strong>{{ guess.guess }}</strong>
+                                    <strong>{{ puzzle.answer | upper }}</strong>
                                 {% else %}
                                     {{ guess.guess }}
                                 {% endif %}

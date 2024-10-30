@@ -3,20 +3,22 @@ from typing import Optional
 
 from django import urls
 from django.contrib.auth.decorators import login_required
-from django.db.models import OuterRef, Sum, Subquery, Count, Q
-from django.db.models.functions import Coalesce
+from django.db.models import OuterRef, Sum, Subquery, Count, Q, F
+from django.db.models.functions import Coalesce, Greatest
 from django.http import Http404, JsonResponse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import PermissionDenied
 
 import django.urls as urls
 import django.forms as forms
 
 from .forms import (
     GuessForm,
-    HuntForm,
+    NewHuntForm,
+    EditHuntForm,
     InviteMemberForm,
     PuzzleForm,
     RegisterForm,
@@ -54,7 +56,7 @@ def register(request):
 @login_required
 def new_hunt(request):
     if request.method == "POST":
-        form = HuntForm(request.POST)
+        form = NewHuntForm(request.POST)
         if form.is_valid():
             hunt = form.save()
 
@@ -63,7 +65,7 @@ def new_hunt(request):
 
             return redirect(urls.reverse("view_hunt", args=[hunt.pk, hunt.slug]))
     else:
-        form = HuntForm()
+        form = NewHuntForm()
 
     return render(
         request,
@@ -207,13 +209,22 @@ def leaderboard(request, hunt_id: int, slug: Optional[str] = None):
             .order_by("-time")[:1]
             .values("time")
         ),
-    ).order_by("-score", "-solve_count", "last_solve")
+        created_or_start=Greatest(F("creation_time"), hunt.start_time),
+        solve_time=Coalesce(F("last_solve"), F("created_or_start"))
+        - F("created_or_start"),
+    )
 
-    print(teams.query)
+    #   print(teams.query)
+    if hunt.leaderboard_style == Hunt.LeaderboardStyle.SPEEDRUN:
+        teams = teams.order_by("-score", "-solve_count", "solve_time")
+        template = "leaderboard_SPD.html"
+    else:
+        teams = teams.order_by("-score", "-solve_count", "last_solve")
+        template = "leaderboard.html"
 
     return render(
         request,
-        "leaderboard.html",
+        template,
         {
             "hunt": hunt,
             "team": team,
@@ -547,6 +558,35 @@ def edit_puzzle(
             "puzzle": puzzle,
             "form": form,
             "formset": formset,
+        },
+    )
+
+
+@login_required
+@redirect_from_hunt_id_to_hunt_id_and_slug
+def edit_hunt(
+    request,
+    hunt_id: int,
+    slug: Optional[str] = None,
+):
+    user = request.user
+    hunt = get_object_or_404(Hunt, id=hunt_id)
+    if not hunt.organizers.filter(id=user.id).exists():
+        raise PermissionDenied
+
+    if request.method == "POST":
+        form = EditHuntForm(request.POST, instance=hunt)
+        if form.is_valid():
+            hunt = form.save()
+            return redirect(urls.reverse("view_hunt", args=[hunt.pk, hunt.slug]))
+    else:
+        form = EditHuntForm(instance=hunt)
+
+    return render(
+        request,
+        "edit_hunt.html",
+        {
+            "form": form,
         },
     )
 

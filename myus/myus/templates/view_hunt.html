@@ -6,12 +6,16 @@
 {% block main %}
     <h1>Hunt: {{ hunt.name }}</h1>
     <nav class="nav-hunt">
-        <p>
-            <a href="{% url 'leaderboard' hunt.id hunt.slug %}">Leaderboard</a>
-        </p>
+        {% if hunt.leaderboard_style != "HID" or is_organizer %}
+            <p>
+                <a href="{% url 'leaderboard' hunt.id hunt.slug %}">Leaderboard</a>
+            </p>
+        {% endif %}
 
         {% if is_organizer %}
-            <p>You are an organizer of this hunt. <a href="{% url 'new_puzzle' hunt.id hunt.slug %}">add puzzle</a></p>
+            <p>You are an organizer of this hunt:
+                <ul><li><a href="{% url 'new_puzzle' hunt.id hunt.slug %}">add puzzle</a></li>
+                    <li><a href="{% url 'edit_hunt' hunt.id hunt.slug %}">edit hunt settings</a></li></ul> </p>
         {% elif team %}
             <p>You are  <a href="{% url 'my_team' hunt.id hunt.slug %}">on Team {{ team.name }}</a>.</p>
         {% else %}
@@ -31,7 +35,7 @@
                 <tr>
                     <td><a href="{% url 'view_puzzle' hunt.id hunt.slug puzzle.id puzzle.slug %}">{{ puzzle.name }}</a></td>
                     <td>{% if puzzle.correct_guess %}✅{% endif %}</td>
-                    <td>{% if puzzle.correct_guess %}<samp>{{ puzzle.correct_guess }}</samp>{% endif %}</td>
+                    <td>{% if puzzle.correct_guess %}<samp>{{ puzzle.answer | upper }}</samp>{% endif %}</td>
                     <td>{{ puzzle.solve_count }}</td>
                     <td>{{ puzzle.guess_count }}</td>
                 </tr>

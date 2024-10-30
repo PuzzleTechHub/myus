@@ -23,6 +23,8 @@ urlpatterns = [
     ),
     path("register", views.register, name="register"),
     path("new", views.new_hunt, name="new_hunt"),
+    path("hunt/<int:hunt_id>/edit", views.edit_hunt, name="edit_hunt"),
+    path("hunt/<int:hunt_id>-<slug:slug>/edit", views.edit_hunt, name="edit_hunt"),
     path("hunt/<int:hunt_id>", views.view_hunt, name="view_hunt"),
     path("hunt/<int:hunt_id>-<slug:slug>", views.view_hunt, name="view_hunt"),
     path("hunt/<int:hunt_id>/team", views.my_team, name="my_team"),

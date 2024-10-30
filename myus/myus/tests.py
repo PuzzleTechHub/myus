@@ -4,7 +4,7 @@ from http import HTTPStatus
 from django.urls import reverse
 from django.test import TestCase
 
-from myus.forms import HuntForm
+from myus.forms import NewHuntForm
 from myus.models import Hunt, Puzzle, User
 
 
@@ -108,8 +108,8 @@ class TestViewPuzzle(TestCase):
         self.assertRedirects(res, self.correct_url)
 
 
-class TestHuntForm(TestCase):
-    """Test the HuntForm"""
+class TestNewHuntForm(TestCase):
+    """Test the NewHuntForm"""
 
     def setUp(self):
         self.shared_test_data = {
@@ -120,59 +120,59 @@ class TestHuntForm(TestCase):
         }
 
     def test_hunt_form_accepts_start_time_in_iso_format(self):
-        """The HuntForm accepts the start_time field in ISO format (YYYY-MM-DDTHH:MM:SS)"""
+        """The NewHuntForm accepts the start_time field in ISO format (YYYY-MM-DDTHH:MM:SS)"""
         test_data = self.shared_test_data.copy()
         start_time = datetime(2024, 3, 15, 1, 2, tzinfo=timezone.utc)
         test_data["start_time"] = start_time.isoformat()
-        form = HuntForm(data=test_data)
+        form = NewHuntForm(data=test_data)
         self.assertTrue(form.is_valid(), msg=form.errors)
         hunt = form.save()
         self.assertEqual(hunt.start_time, start_time)
 
     def test_hunt_form_accepts_start_time_without_seconds(self):
-        """The HuntForm accepts the start_time field without seconds specified
+        """The NewHuntForm accepts the start_time field without seconds specified
 
         The out-of-the-box datetime-local input appears to provide data in this format
         """
         test_data = self.shared_test_data.copy()
         start_time = datetime(2024, 3, 15, 1, 2, tzinfo=timezone.utc)
         test_data["start_time"] = start_time.strftime("%Y-%m-%dT%H:%M")
-        form = HuntForm(data=test_data)
+        form = NewHuntForm(data=test_data)
         self.assertTrue(form.is_valid(), msg=form.errors)
         hunt = form.save()
         self.assertEqual(hunt.start_time, start_time)
 
     def test_hunt_form_start_time_uses_datetime_local_input(self):
-        """The HuntForm uses a datetime-local input for the start_time field"""
-        form = HuntForm(data=self.shared_test_data)
+        """The NewHuntForm uses a datetime-local input for the start_time field"""
+        form = NewHuntForm(data=self.shared_test_data)
         start_time_field = form.fields["start_time"]
         self.assertEqual(start_time_field.widget.input_type, "datetime-local")
 
     def test_hunt_form_accepts_end_time_in_iso_format(self):
-        """The HuntForm accepts the end_time field in ISO format (YYYY-MM-DDTHH:MM:SS)"""
+        """The NewHuntForm accepts the end_time field in ISO format (YYYY-MM-DDTHH:MM:SS)"""
         test_data = self.shared_test_data.copy()
         end_time = datetime(2024, 3, 15, 1, 2, tzinfo=timezone.utc)
         test_data["end_time"] = end_time.isoformat()
-        form = HuntForm(data=test_data)
+        form = NewHuntForm(data=test_data)
         self.assertTrue(form.is_valid(), msg=form.errors)
         hunt = form.save()
         self.assertEqual(hunt.end_time, end_time)
 
     def test_hunt_form_accepts_end_time_without_seconds(self):
-        """The HuntForm accepts the end_time field without seconds specified
+        """The NewHuntForm accepts the end_time field without seconds specified
 
         The out-of-the-box datetime-local input appears to provide data in this format
         """
         test_data = self.shared_test_data.copy()
         end_time = datetime(2024, 3, 15, 1, 2, tzinfo=timezone.utc)
         test_data["end_time"] = end_time.strftime("%Y-%m-%dT%H:%M")
-        form = HuntForm(data=test_data)
+        form = NewHuntForm(data=test_data)
         self.assertTrue(form.is_valid(), msg=form.errors)
         hunt = form.save()
         self.assertEqual(hunt.end_time, end_time)
 
     def test_hunt_form_end_time_displays_datetime_local_widget(self):
-        """The HuntForm uses a datetime-local input for the end_time field"""
-        form = HuntForm(data=self.shared_test_data)
+        """The NewHuntForm uses a datetime-local input for the end_time field"""
+        form = NewHuntForm(data=self.shared_test_data)
         end_time_field = form.fields["end_time"]
         self.assertEqual(end_time_field.widget.input_type, "datetime-local")

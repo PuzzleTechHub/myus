@@ -29,12 +29,12 @@ class Hunt(models.Model):
     start_time = models.DateTimeField(
         blank=True,
         null=True,
-        help_text="Start time of the hunt. If empty, the hunt will never begin. For indefinitely open hunts, you can just set it to any time in the past.",
+        help_text="(Not implemented) Start time of the hunt. If empty, the hunt will never begin. For indefinitely open hunts, you can just set it to any time in the past.",
     )
     end_time = models.DateTimeField(
         blank=True,
         null=True,
-        help_text="End date of the hunt. If empty, the hunt will always be open.",
+        help_text="(Not implemented) End date of the hunt. If empty, the hunt will always be open.",
     )
     organizers = models.ManyToManyField(User, related_name="organizing_hunts")
     invited_organizers = models.ManyToManyField(
@@ -47,13 +47,22 @@ class Hunt(models.Model):
     )
     member_limit = models.IntegerField(
         default=0,
-        help_text="The maximum number of members allowed per team; 0 means unlimited",
+        help_text="(Not implemented) The maximum number of members allowed per team; 0 means unlimited",
         validators=[MinValueValidator(0)],
     )
     guess_limit = models.IntegerField(
         default=DEFAULT_GUESS_LIMIT,
         help_text="The default number of guesses teams get on each puzzle; 0 means unlimited",
         validators=[MinValueValidator(0)],
+    )
+
+    class LeaderboardStyle(models.TextChoices):
+        DEFAULT = "DEF", "Default (ordered by score, solve count, and last solve time)"
+        HIDDEN = "HID", "Hidden (not displayed publicly)"
+        SPEEDRUN = "SPD", "Speedrun (ordered by score and time to solve)"
+
+    leaderboard_style = models.CharField(
+        max_length=3, choices=LeaderboardStyle, default=LeaderboardStyle.DEFAULT
     )
     slug = models.SlugField(help_text="A short, unique identifier for the hunt.")
 
