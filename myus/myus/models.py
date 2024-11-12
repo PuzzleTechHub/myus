@@ -69,6 +69,9 @@ class Hunt(models.Model):
     def public_puzzles(self):
         return self.puzzles.filter(progress_threshold__lte=self.progress_floor)
 
+    def __str__(self):
+        return self.name
+
 
 class Puzzle(models.Model):
     hunt = models.ForeignKey(Hunt, on_delete=models.CASCADE, related_name="puzzles")
@@ -113,6 +116,9 @@ class Puzzle(models.Model):
 
         return progress >= self.progress_threshold
 
+    def __str__(self):
+        return self.hunt.name + "_" + self.slug
+
 
 class GuessResponse(models.Model):
     """Any special response to a particular answer guess.
@@ -132,6 +138,9 @@ class GuessResponse(models.Model):
 
     class Meta:
         unique_together = ("puzzle", "guess")
+
+    def __str__(self):
+        return self.puzzle.name + "_" + self.guess
 
 
 class Team(models.Model):
@@ -182,6 +191,9 @@ class Team(models.Model):
             ),
         ]
 
+    def __str__(self):
+        return self.hunt.name + "_" + self.name
+
 
 class Guess(models.Model):
     guess = models.CharField(max_length=500)
@@ -204,6 +216,9 @@ class Guess(models.Model):
             )
         ]
 
+    def __str__(self):
+        return self.team.name + "_" + self.puzzle.name + "_" + self.guess
+
 
 class ExtraGuessGrant(models.Model):
     "Extra guesses granted to a particular team."
@@ -220,3 +235,6 @@ class ExtraGuessGrant(models.Model):
                 name="unique_team_puzzle_grant", fields=["team", "puzzle"]
             ),
         ]
+
+    def __str__(self):
+        return self.team.name + "_" + self.puzzle.name
