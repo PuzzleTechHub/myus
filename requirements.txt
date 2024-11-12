@@ -2,7 +2,7 @@ black==24.8.0
 bleach==6.1.0
 dj-database-url==2.2.0
 dj-static==0.0.6
-django==5.1.1
+django==5.1.2
 gunicorn==23.0.0
 markdown==3.7
 pre-commit==4.0.1
