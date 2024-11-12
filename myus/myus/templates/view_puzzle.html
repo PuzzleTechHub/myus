@@ -5,7 +5,11 @@
     » {{ puzzle.name }}
 {% endblock %}
 {% block main %}
-    <h1>Puzzle: {{ puzzle.name }}</h1>
+    {% if show_solution %}
+        <h1>Puzzle: {{ puzzle.name }} (<a href="{{puzzle.solution_url}}">Solution</a>) </h1>
+    {% else %}
+        <h1>Puzzle: {{ puzzle.name }} </h1>
+    {% endif %}
 
     <div class="guesses">
         {% if request.user.is_anonymous %}

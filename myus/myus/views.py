@@ -327,6 +327,13 @@ def view_puzzle(
     else:
         guess_form = GuessForm()
 
+    show_solution = False
+    if puzzle.solution_url != "":
+        if hunt.solution_style == Hunt.SolutionStyle.VISIBLE or (
+            hunt.solution_style == Hunt.SolutionStyle.AFTER_SOLVE and solved
+        ):
+            show_solution = True
+
     return render(
         request,
         "view_puzzle.html",
@@ -335,6 +342,7 @@ def view_puzzle(
             "team": team,
             "puzzle": puzzle,
             "solved": solved,
+            "show_solution": show_solution,
             "guesses_limited": guesses_limited,
             "guesses_remaining": guesses_remaining,
             "guesses_at_limit": guesses_at_limit,
@@ -464,24 +472,6 @@ class GuessResponseForm(forms.ModelForm):
     class Meta:
         model = GuessResponse
         fields = ["guess", "response"]
-
-
-class PuzzleForm(forms.ModelForm):
-    content = forms.CharField(widget=MarkdownTextarea, required=False)
-
-    class Meta:
-        model = Puzzle
-        fields = [
-            "name",
-            "slug",
-            "content",
-            "answer",
-            "answer_response",
-            "points",
-            "order",
-            "progress_points",
-            "progress_threshold",
-        ]
 
 
 @redirect_from_hunt_id_to_hunt_id_and_slug

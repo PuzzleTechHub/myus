@@ -84,6 +84,7 @@ class NewHuntForm(forms.ModelForm):
             "member_limit",
             "guess_limit",
             "leaderboard_style",
+            "solution_style",
         ]
 
 
@@ -103,6 +104,7 @@ class EditHuntForm(forms.ModelForm):
             "member_limit",
             "guess_limit",
             "leaderboard_style",
+            "solution_style",
         ]
 
 
@@ -142,6 +144,8 @@ class PuzzleForm(forms.ModelForm):
             "slug",
             "content",
             "answer",
+            "answer_response",
+            "solution_url",
             "points",
             "order",
             "progress_points",

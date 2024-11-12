@@ -64,6 +64,16 @@ class Hunt(models.Model):
     leaderboard_style = models.CharField(
         max_length=3, choices=LeaderboardStyle, default=LeaderboardStyle.DEFAULT
     )
+
+    class SolutionStyle(models.TextChoices):
+        VISIBLE = "VIS", "Solutions are always visible"
+        HIDDEN = "HID", "Solutions are always hidden"
+        AFTER_SOLVE = "SOL", "Solution displayed after puzzle is solved"
+
+    solution_style = models.CharField(
+        max_length=3, choices=SolutionStyle, default=SolutionStyle.HIDDEN
+    )
+
     slug = models.SlugField(help_text="A short, unique identifier for the hunt.")
 
     def public_puzzles(self):
@@ -79,6 +89,13 @@ class Puzzle(models.Model):
     content = models.TextField(
         blank=True,
         help_text="The puzzle body. For most puzzles, we suggest just providing an external URL; however, you can put short text-only puzzles here, or include a small amount of flavortext or explanatory text with a URL.",
+    )
+    solution_url = models.CharField(
+        max_length=500,
+        blank=True,
+        default="",
+        verbose_name="Solution URL",
+        help_text="URL of solution.",
     )
     answer = models.CharField(max_length=500)
     answer_response = models.CharField(
