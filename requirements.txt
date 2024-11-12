@@ -6,6 +6,6 @@ django==5.1.2
 gunicorn==23.0.0
 markdown==3.7
 pre-commit==4.0.1
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.10
 python-dotenv==1.0.1
 whitenoise==6.8.2
