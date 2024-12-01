@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import OuterRef, Sum, Subquery, Count, Q, F, DurationField
 from django.db.models.functions import Coalesce, Greatest
 from django.http import Http404, JsonResponse
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
@@ -89,14 +89,22 @@ def get_team(user, hunt):
 
 
 def redirect_from_hunt_id_to_hunt_id_and_slug(view_func):
-    """Redirect from a URL with a hunt ID to a URL with a hunt ID and a slug
+    """If hunt is private, non-organizers will need to provide an exact slug.
 
-    Also redirect from a URL with a hunt ID and the wrong slug to the correct slug
+    If hunt is public:
+    - Redirect from a URL with a hunt ID to a URL with a hunt ID and a slug
+    - Also redirect from a URL with a hunt ID and the wrong slug to the correct slug
     """
 
     @wraps(view_func)
-    def wrapper(request, hunt_id: int, *args, slug: Optional[str] = None, **kwargs):
+    def wrapper(
+        request: HttpRequest, hunt_id: int, *args, slug: Optional[str] = None, **kwargs
+    ):
         hunt = get_object_or_404(Hunt, id=hunt_id)
+
+        user = request.user
+        if not hunt.is_authorized_to_view(user, slug):
+            raise PermissionDenied
 
         if hunt.slug != slug:
             view_name = urls.resolve(request.path_info).url_name
@@ -108,14 +116,16 @@ def redirect_from_hunt_id_to_hunt_id_and_slug(view_func):
 
 
 def force_url_to_include_both_hunt_and_puzzle_slugs(view_func):
-    """Redirect from a URL missing a hunt or puzzle slug to one that includes them
+    """If hunt is private, non-organizers will need to provide an exact slug.
 
-    Also redirect from a URL where the ID doesn't match the slug to the correct URL
+    If hunt is public:
+    - Redirect from a URL missing a hunt or puzzle slug to one that includes them
+    - Also redirect from a URL where the ID doesn't match the slug to the correct URL
     """
 
     @wraps(view_func)
     def wrapper(
-        request,
+        request: HttpRequest,
         hunt_id: int,
         puzzle_id: int,
         *args,
@@ -125,6 +135,10 @@ def force_url_to_include_both_hunt_and_puzzle_slugs(view_func):
     ):
         hunt = get_object_or_404(Hunt, id=hunt_id)
         puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
+
+        user = request.user
+        if not hunt.is_authorized_to_view(user, hunt_slug):
+            raise PermissionDenied
 
         if hunt.slug != hunt_slug or puzzle.slug != puzzle_slug:
             view_name = urls.resolve(request.path_info).url_name
