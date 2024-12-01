@@ -154,7 +154,7 @@ def view_hunt(request, hunt_id: int, slug: Optional[str] = None):
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
     team = get_team(user, hunt)
-    is_organizer = user.is_authenticated and hunt.organizers.filter(id=user.id).exists()
+    is_organizer = hunt.is_organizer(user)
 
     if is_organizer:
         puzzles = hunt.puzzles.all()
@@ -185,7 +185,7 @@ def leaderboard(request, hunt_id: int, slug: Optional[str] = None):
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
     team = get_team(user, hunt)
-    is_organizer = user.is_authenticated and hunt.organizers.filter(id=user.id).exists()
+    is_organizer = hunt.is_organizer(user)
 
     # for the sake of simplicity, assume teams won't end up with two correct guesses for a puzzle
     teams = hunt.teams.annotate(
@@ -255,7 +255,7 @@ def view_puzzle(
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
     team = get_team(user, hunt)
 
-    is_organizer = user.is_authenticated and hunt.organizers.filter(id=user.id).exists()
+    is_organizer = hunt.is_organizer(user)
 
     if not is_organizer and not puzzle.is_viewable_by(team):
         raise Http404("Puzzle is not viewable by team (or the public)")
@@ -365,7 +365,7 @@ def view_puzzle_log(
     hunt = get_object_or_404(Hunt, id=hunt_id)
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
 
-    is_organizer = user.is_authenticated and hunt.organizers.filter(id=user.id).exists()
+    is_organizer = hunt.is_organizer(user)
 
     if not is_organizer:
         raise Http404("Puzzle stats are only viewable by organizers")
@@ -462,8 +462,7 @@ def my_team(request, hunt_id: int, slug: Optional[str] = None):
                 if user.is_authenticated
                 else []
             ),
-            "is_organizer": not user.is_anonymous
-            and hunt.organizers.filter(id=user.id).exists(),
+            "is_organizer": hunt.is_organizer(user),
         },
     )
 
@@ -483,7 +482,7 @@ def new_puzzle(request, hunt_id: int, slug: Optional[str] = None):
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
 
-    if not hunt.organizers.filter(id=user.id).exists():
+    if not hunt.is_organizer(user):
         return HttpResponse(status=403)
 
     if request.method == "POST":
@@ -528,7 +527,7 @@ def edit_puzzle(
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
     puzzle = get_object_or_404(Puzzle, hunt=hunt, id=puzzle_id)
-    if not hunt.organizers.filter(id=user.id).exists():
+    if not hunt.is_organizer(user):
         return HttpResponse(status=403)
 
     if request.method == "POST":
@@ -565,7 +564,7 @@ def edit_hunt(
 ):
     user = request.user
     hunt = get_object_or_404(Hunt, id=hunt_id)
-    if not hunt.organizers.filter(id=user.id).exists():
+    if not hunt.is_organizer(user):
         raise PermissionDenied
 
     if request.method == "POST":
