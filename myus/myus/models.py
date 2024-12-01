@@ -83,6 +83,19 @@ class Hunt(models.Model):
     def public_puzzles(self):
         return self.puzzles.filter(progress_threshold__lte=self.progress_floor)
 
+    def is_authorized_to_view(self, user: User, url_slug: str | None):
+        if not self.is_private:
+            return True
+        if user.is_authenticated and self.organizers.filter(id=user.id).exists():
+            return True
+        if self.slug == url_slug:
+            return True
+
+        return False
+
+    def is_organizer(self, user: User):
+        return user.is_authenticated and self.organizers.filter(id=user.id).exists()
+
     def __str__(self):
         return self.name
 
