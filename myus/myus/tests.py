@@ -117,6 +117,8 @@ class TestNewHuntForm(TestCase):
             "slug": "test",
             "member_limit": 0,
             "guess_limit": 20,
+            "leaderboard_style": "DEF",
+            "solution_style": "VIS",
         }
 
     def test_hunt_form_accepts_start_time_in_iso_format(self):
