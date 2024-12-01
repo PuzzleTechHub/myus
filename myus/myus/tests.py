@@ -44,6 +44,80 @@ class TestViewHunt(TestCase):
         )
 
 
+class TestViewPrivateHunt(TestCase):
+    """Test the view_hunt endpoint for private hunts"""
+
+    def setUp(self):
+        self.organizer = User.objects.create(username="organizer")
+        self.user = User.objects.create(username="testuser")
+
+        self.hunt = Hunt.objects.create(
+            name="Test Hunt", slug="test-hunt", is_private=True
+        )
+        self.hunt.organizers.add(self.organizer)
+
+        self.view_name = "view_hunt"
+        self.no_slug_url = reverse(self.view_name, args=[self.hunt.id])
+        self.incorrect_slug_url = reverse(
+            self.view_name, args=[self.hunt.id, "the-wrong-slug"]
+        )
+        self.correct_url = reverse(self.view_name, args=[self.hunt.id, self.hunt.slug])
+
+    def test_view_private_hunt_as_organizer_with_id_and_no_slug_success(self):
+        """Organizer should be able to view hunt with no slug"""
+        self.client.force_login(self.organizer)
+        res = self.client.get(self.no_slug_url)
+        self.assertRedirects(res, self.correct_url)
+
+    def test_view_private_hunt_as_organizer_with_id_and_incorrect_slug_success(self):
+        """Organizer should be able to view hunt with incorrect slug"""
+        self.client.force_login(self.organizer)
+        res = self.client.get(self.incorrect_slug_url)
+        self.assertRedirects(res, self.correct_url)
+
+    def test_view_private_hunt_as_organizer_with_id_and_correct_slug_success(self):
+        """Organizer should be able to view hunt with correct slug"""
+        self.client.force_login(self.organizer)
+        res = self.client.get(self.correct_url)
+        self.assertEqual(res.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(res, "view_hunt.html")
+
+    def test_view_private_hunt_as_user_with_id_and_no_slug_failure(self):
+        """User should not be able to view hunt with no slug"""
+        self.client.force_login(self.user)
+        res = self.client.get(self.no_slug_url)
+        self.assertEqual(res.status_code, HTTPStatus.FORBIDDEN)
+
+    def test_view_private_hunt_as_user_with_id_and_incorrect_slug_failure(self):
+        """User should not be able to view hunt with incorrect slug"""
+        self.client.force_login(self.user)
+        res = self.client.get(self.incorrect_slug_url)
+        self.assertEqual(res.status_code, HTTPStatus.FORBIDDEN)
+
+    def test_view_private_hunt_as_user_with_id_and_correct_slug_success(self):
+        """User should be able to view hunt with correct slug"""
+        self.client.force_login(self.user)
+        res = self.client.get(self.correct_url)
+        self.assertEqual(res.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(res, "view_hunt.html")
+
+    def test_view_private_hunt_as_guest_with_id_and_no_slug_failure(self):
+        """Guests should not be able to view hunt with no slug"""
+        res = self.client.get(self.no_slug_url)
+        self.assertEqual(res.status_code, HTTPStatus.FORBIDDEN)
+
+    def test_view_private_hunt_as_guest_with_id_and_incorrect_slug_failure(self):
+        """Guests should not be able to view hunt with incorrect slug"""
+        res = self.client.get(self.incorrect_slug_url)
+        self.assertEqual(res.status_code, HTTPStatus.FORBIDDEN)
+
+    def test_view_private_hunt_as_guest_with_id_and_correct_slug_success(self):
+        """Guests should be able to view hunt with correct slug"""
+        res = self.client.get(self.correct_url)
+        self.assertEqual(res.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(res, "view_hunt.html")
+
+
 class TestViewPuzzle(TestCase):
     """Test the view_puzzle endpoint
 
