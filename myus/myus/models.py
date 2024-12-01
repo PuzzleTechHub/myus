@@ -57,7 +57,7 @@ class Hunt(models.Model):
     )
     is_private = models.BooleanField(
         default=False,
-        help_text="If true, only organizers can view the hunt and its puzzles. Defaults to false.",
+        help_text="If true, non-organizers will need to provide an exact URL to view the hunt.",
     )
 
     class LeaderboardStyle(models.TextChoices):
