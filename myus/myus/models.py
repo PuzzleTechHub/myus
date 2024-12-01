@@ -55,6 +55,10 @@ class Hunt(models.Model):
         help_text="The default number of guesses teams get on each puzzle; 0 means unlimited",
         validators=[MinValueValidator(0)],
     )
+    is_private = models.BooleanField(
+        default=False,
+        help_text="If true, only organizers can view the hunt and its puzzles. Defaults to false.",
+    )
 
     class LeaderboardStyle(models.TextChoices):
         DEFAULT = "DEF", "Default (ordered by score, solve count, and last solve time)"
