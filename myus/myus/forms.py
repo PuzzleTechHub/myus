@@ -78,6 +78,7 @@ class NewHuntForm(forms.ModelForm):
         fields = [
             "name",
             "slug",
+            "is_private",
             "description",
             "start_time",
             "end_time",
@@ -98,6 +99,7 @@ class EditHuntForm(forms.ModelForm):
         fields = [
             "name",
             "slug",
+            "is_private",
             "description",
             "start_time",
             "end_time",
