@@ -55,6 +55,10 @@ class Hunt(models.Model):
         help_text="The default number of guesses teams get on each puzzle; 0 means unlimited",
         validators=[MinValueValidator(0)],
     )
+    is_private = models.BooleanField(
+        default=False,
+        help_text="If true, non-organizers will need to provide an exact URL to view the hunt.",
+    )
 
     class LeaderboardStyle(models.TextChoices):
         DEFAULT = "DEF", "Default (ordered by score, solve count, and last solve time)"
@@ -78,6 +82,19 @@ class Hunt(models.Model):
 
     def public_puzzles(self):
         return self.puzzles.filter(progress_threshold__lte=self.progress_floor)
+
+    def is_authorized_to_view(self, user: User, url_slug: str | None):
+        if not self.is_private:
+            return True
+        if user.is_authenticated and self.organizers.filter(id=user.id).exists():
+            return True
+        if self.slug == url_slug:
+            return True
+
+        return False
+
+    def is_organizer(self, user: User):
+        return user.is_authenticated and self.organizers.filter(id=user.id).exists()
 
     def __str__(self):
         return self.name
