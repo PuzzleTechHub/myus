@@ -31,7 +31,7 @@ from .models import Hunt, Team, Puzzle, Guess, ExtraGuessGrant, GuessResponse
 
 def index(request):
     # user = request.user
-    hunts = Hunt.objects.all()
+    hunts = Hunt.objects.filter(is_private=False)
     return render(
         request,
         "index.html",
